@@ -46,4 +46,32 @@ public class PresenterTypeBook implements IPresenterTypeBook {
             iViewTypeBook.displayAddTypeFailed();
         }
     }
+
+    @Override
+    public void getItemDelete(String key) {
+        modelTypeBook.initDeleteTypeBook(key,this);
+    }
+
+    @Override
+    public void resultDeleteTypeBook(boolean success) {
+        if(success){
+            iViewTypeBook.displayDeleteItemTypeBookSuccess();
+        }else {
+            iViewTypeBook.displayDeleteItemTypeBookFailed();
+        }
+    }
+
+    @Override
+    public void getItemEdit(String key,TypeBook typeBook) {
+        modelTypeBook.initEditTypeBook(key,typeBook,this);
+    }
+
+    @Override
+    public void resultEditTypeBook(boolean success) {
+        if(success){
+            iViewTypeBook.displayEditItemTypeBookSuccess();
+        }else {
+            iViewTypeBook.displayEditItemTypeBookFailed();
+        }
+    }
 }

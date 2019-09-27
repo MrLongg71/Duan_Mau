@@ -19,8 +19,8 @@
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgTypeBook"
                 app:civ_border_color="@color/colorBackgroup"
-                app:civ_border_width="1dp"
-                android:src="@drawable/ic_user"
+                app:civ_border_width="2dp"
+                android:src="@drawable/ic_type_book"
                 android:layout_width="96dp"
                 android:layout_height="96dp" />
             <LinearLayout
@@ -35,6 +35,10 @@
                     android:layout_margin="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+                <View
+                    android:background="@color/colorGrayline"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
                 <TextView
                     android:id="@+id/txtTypeName"
                     android:layout_margin="5dp"

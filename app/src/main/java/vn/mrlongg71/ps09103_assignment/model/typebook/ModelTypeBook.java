@@ -27,16 +27,12 @@ public class ModelTypeBook  {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("test", "add");
-                 TypeBook typeBook = new TypeBook();
-                typeBook = null;
-                typeBook = dataSnapshot.getValue(TypeBook.class);
+               TypeBook typeBook = dataSnapshot.getValue(TypeBook.class);
                 presenterTypeBook.resultgetTypeBook(typeBook);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("test" , "change");
                 databaseType.removeEventListener(this);
                 databaseType.addChildEventListener(this);
 
@@ -77,4 +73,31 @@ public class ModelTypeBook  {
             }
         });
     }
+
+    public void initDeleteTypeBook(String key, final PresenterTypeBook presenterTypeBook){
+        databaseType.child(key).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    presenterTypeBook.resultDeleteTypeBook(true);
+                }else {
+                    presenterTypeBook.resultDeleteTypeBook(false);
+                }
+            }
+        });
+
+    }
+    public void initEditTypeBook(String key, TypeBook typeBook, final PresenterTypeBook presenterTypeBook){
+        databaseType.child(key).setValue(typeBook).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    presenterTypeBook.resultEditTypeBook(true);
+                }else{
+                    presenterTypeBook.resultEditTypeBook(false);
+                }
+            }
+        });
+    }
+
 }

@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -24,6 +25,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private CallbackManager callbackManager;
     private Button btnLogin;
     private EditText edtEmail,edtPass;
+    private TextView txtForgotPassword;
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnLogin = findViewById(R.id.btnLogin);
         edtEmail = findViewById(R.id.edtEmail);
         edtPass = findViewById(R.id.edtPass);
+        txtForgotPassword = findViewById(R.id.txtForgotpassword);
         progressDialog = new ProgressDialog(LoginActivity.this);
         edtEmail.setText("abc@gmail.com");
         edtPass.setText("123456");
@@ -45,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void initEvent() {
         btnLogin.setOnClickListener(this);
-
+        txtForgotPassword.setOnClickListener(this);
     }
 
     @Override
@@ -56,7 +59,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String password = edtPass.getText().toString().trim();
                 doLoginUser(email,password);
                 break;
+            case R.id.txtForgotpassword:
+                initForgotpassword();
+                break;
         }
+    }
+
+    private void initForgotpassword() {
+        android.app.Dialog dialogForgotpassword = new android.app.Dialog(this);
+        dialogForgotpassword.setContentView(R.layout.custom_dialog_getpass);
+        dialogForgotpassword.getWindow().setBackgroundDrawableResource(R.color.float_transparent);
+        dialogForgotpassword.show();
+
     }
 
     private void doLoginUser(String email,String password){

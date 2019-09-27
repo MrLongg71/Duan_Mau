@@ -56,6 +56,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
         <androidx.cardview.widget.CardView
             android:layout_marginTop="20dp"
             app:cardCornerRadius="10dp"
@@ -69,6 +70,19 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/txtManagerUser"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/manager"
+                    style="@style/AppTheme.TextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <View
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorGray"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"></View>
                 <TextView
                     android:layout_marginTop="10dp"
                     android:gravity="center"

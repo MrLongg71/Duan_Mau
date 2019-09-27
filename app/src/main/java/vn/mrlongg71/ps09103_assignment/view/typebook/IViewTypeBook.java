@@ -9,4 +9,11 @@ public interface IViewTypeBook {
 
     void displayAddTypeSucces();
     void displayAddTypeFailed();
+
+    void displayDeleteItemTypeBookSuccess();
+    void displayDeleteItemTypeBookFailed();
+
+    void displayEditItemTypeBookSuccess();
+    void displayEditItemTypeBookFailed();
+
 }

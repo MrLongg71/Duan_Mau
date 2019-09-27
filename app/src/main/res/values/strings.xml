@@ -43,5 +43,12 @@
     <string name="error">Error</string>
     <string name="edit">Edit</string>
     <string name="wantDelete">Do you want delete</string>
+    <string name="email">Email</string>
+    <string name="getpass">Do you want to get a password?</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="manager">Manager</string>
+    <string name="addUser">Add User</string>
+    <string name="pass">Password</string>
+    <string name="notthingdata">Notthing Data</string>
 
 </resources>
