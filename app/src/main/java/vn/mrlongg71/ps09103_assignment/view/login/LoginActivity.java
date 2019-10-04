@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtPass = findViewById(R.id.edtPass);
         txtForgotPassword = findViewById(R.id.txtForgotpassword);
         progressDialog = new ProgressDialog(LoginActivity.this);
-        edtEmail.setText("abc@gmail.com");
+        edtEmail.setText("abc456@gmail.com");
         edtPass.setText("123456");
         initEvent();
     }

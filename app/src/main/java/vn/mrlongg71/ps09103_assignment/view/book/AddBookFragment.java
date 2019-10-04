@@ -1,31 +1,43 @@
 package vn.mrlongg71.ps09103_assignment.view.book;
 
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.adapter.SpinerAdapter;
+import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.TypeBook;
-import vn.mrlongg71.ps09103_assignment.presenter.book.IPresenterBookAdapter;
 import vn.mrlongg71.ps09103_assignment.presenter.book.PresenterBook;
 
 
@@ -34,21 +46,47 @@ public class AddBookFragment extends Fragment implements IViewBook {
 
     private Button btnAddBook;
     private TextInputEditText edtBookName, edtAuthor, edtPrice, edtAmount;
+    private ImageView imgChooseImagesBook, imgChooseImagesBook2, imgChooseImagesBook3;
+    private CardView cardCamera2, cardCamera3;
+    private ProgressDialog progressDialog;
     private SpinerAdapter adapterSpiner;
     private Spinner spinnerTypeBook;
     private PresenterBook presenterBook;
     private int positionSpiner = 0;
     private List<TypeBook> typeBookLists;
+    private ArrayList<Book> bookArrayList;
+    private int position = 0;
+    private int REQUESTCODE = 123;
+    private Bundle bundle;
+    private boolean click = false;
+    private List<String> listPathImages = new ArrayList<>();
+    private StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("book");
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_book, container, false);
         initView(view);
-        initEvent();
-
+        initEventAdd();
+        initEventEdit();
         return view;
+    }
+
+    private void initEventEdit() {
+        bookArrayList = new ArrayList<>();
+        bundle = getArguments();
+        if (bundle != null) {
+            Book book = bundle.getParcelable("book");
+            edtBookName.setText(book.getBookname());
+            edtPrice.setText(book.getPrice() + "");
+            edtAuthor.setText(book.getAuthor());
+            edtAmount.setText(book.getAmount());
+            listPathImages = book.getArrImagesBook();
+            displayListImagesBookEdit();
+            btnAddBook.setText("Edit");
+            initEditBook(book);
+        }
     }
 
     private void initView(View view) {
@@ -57,13 +95,36 @@ public class AddBookFragment extends Fragment implements IViewBook {
         edtAmount = view.findViewById(R.id.edtAmount);
         edtAuthor = view.findViewById(R.id.edtAuthor);
         edtPrice = view.findViewById(R.id.edtPrice);
+        progressDialog = new ProgressDialog(getActivity());
+        imgChooseImagesBook = view.findViewById(R.id.imgChoooseImagesBook);
+        imgChooseImagesBook2 = view.findViewById(R.id.imgChoooseImagesBook2);
+        imgChooseImagesBook3 = view.findViewById(R.id.imgChoooseImagesBook3);
+
+        cardCamera2 = view.findViewById(R.id.cartCamera2);
+        cardCamera3 = view.findViewById(R.id.cartCamera3);
+
         spinnerTypeBook = view.findViewById(R.id.spinerTypeBook);
+
         presenterBook = new PresenterBook(this);
         typeBookLists = new ArrayList<>();
+        typeBookLists.add(new TypeBook("key", "code", "Chọn loại"));
         presenterBook.getTypeBook();
+        initChooseImages();
+
     }
 
-    private void initEvent() {
+    private void initChooseImages() {
+        imgChooseImagesBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                click = true;
+                Intent intent = new Intent(getActivity(), ChooseImageActivity.class);
+                startActivityForResult(intent, REQUESTCODE);
+            }
+        });
+    }
+
+    private void initEditBook(final Book book) {
         btnAddBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,12 +133,7 @@ public class AddBookFragment extends Fragment implements IViewBook {
                 String author = edtAuthor.getText().toString().trim();
                 String amount = edtAmount.getText().toString().trim();
                 String pricestr = edtPrice.getText().toString().trim();
-
-
-
-
-                if (checkValid(bookname, author, amount, pricestr)) {
-                    Book book = new Book();
+                if (checkValid(bookname, author, amount, pricestr, positionSpiner, listPathImages)) {
                     book.setBookname(edtBookName.getText().toString().trim());
                     book.setAmount(edtAmount.getText().toString().trim());
                     book.setAuthor(edtAuthor.getText().toString().trim());
@@ -85,37 +141,75 @@ public class AddBookFragment extends Fragment implements IViewBook {
                     double price = Double.parseDouble(pricestr);
                     book.setPrice(price);
                     book.setTypecode(typeBookLists.get(positionSpiner).getKey());
-                    presenterBook.getAddBook(book);
-                } else {
-                    Toasty.error(getActivity(),getString(R.string.error),Toasty.LENGTH_LONG).show();
-                }
+                    if(click){
+                        presenterBook.getItemEditBook(book.getBookcode(), book,listPathImages);
+                    }
+                    presenterBook.getItemEditBook(book.getBookcode(), book,null);
 
+                } else {
+                    Toasty.error(getActivity(), getString(R.string.error), Toasty.LENGTH_LONG).show();
+                }
             }
         });
     }
 
+    private void initEventAdd() {
+        if (bundle == null) {
+            btnAddBook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    positionSpiner = spinnerTypeBook.getSelectedItemPosition();
+                    String bookname = edtBookName.getText().toString().trim();
+                    String author = edtAuthor.getText().toString().trim();
+                    String amount = edtAmount.getText().toString().trim();
+                    String pricestr = edtPrice.getText().toString().trim();
+
+
+                    if (checkValid(bookname, author, amount, pricestr, positionSpiner, listPathImages)) {
+                        Dialog.DialogLoading(progressDialog, true);
+                        Book book = new Book();
+                        book.setBookname(edtBookName.getText().toString().trim());
+                        book.setAmount(edtAmount.getText().toString().trim());
+                        book.setAuthor(edtAuthor.getText().toString().trim());
+
+                        double price = Double.parseDouble(pricestr);
+                        book.setPrice(price);
+                        book.setTypecode(typeBookLists.get(positionSpiner).getKey());
+
+                        presenterBook.getAddBook(book, listPathImages);
+                    } else {
+                        Toasty.error(getActivity(), getString(R.string.error), Toasty.LENGTH_LONG).show();
+                    }
+
+                }
+            });
+        }
+    }
+
     @Override
-    public void displayListBook(List<Book> bookList, List<TypeBook> typeBookList) {
+    public void displayListBook(ArrayList<Book> bookList, List<TypeBook> typeBookList) {
 
     }
 
     @Override
-    public void displayListTypeBookSpiner(List<TypeBook> typeBookList) {
-        typeBookLists.addAll(typeBookList);
-        adapterSpiner = new SpinerAdapter(getActivity(),R.layout.custom_spiner,typeBookList);
+    public void displayListTypeBookSpiner(TypeBook typeBook) {
+        typeBookLists.add(typeBook);
+        adapterSpiner = new SpinerAdapter(getActivity(), R.layout.custom_spiner, typeBookLists);
         spinnerTypeBook.setAdapter(adapterSpiner);
-
     }
+
 
     @Override
     public void displayAddBookSucces() {
+        Dialog.DialogLoading(progressDialog, false);
         getActivity().getSupportFragmentManager().popBackStack();
-        Toasty.success(getActivity(),getString(R.string.success),Toasty.LENGTH_LONG).show();
+        Toasty.success(getActivity(), getString(R.string.success), Toasty.LENGTH_LONG).show();
+
     }
 
     @Override
     public void displayAddBookFailed() {
-        Toasty.error(getActivity(),getString(R.string.error),Toasty.LENGTH_LONG).show();
+        Toasty.error(getActivity(), getString(R.string.error), Toasty.LENGTH_LONG).show();
 
     }
 
@@ -129,14 +223,157 @@ public class AddBookFragment extends Fragment implements IViewBook {
 
     }
 
-    public boolean checkValid(String bookname, String amount, String author, String price) {
+    @Override
+    public void displayEditItemBookSuccess() {
+        getActivity().getSupportFragmentManager().popBackStack();
+        Toasty.success(getActivity(), getString(R.string.success), Toasty.LENGTH_LONG).show();
+    }
 
-        if (bookname.length() == 0 || author.length() == 0 || amount.length() == 0 || price.length() == 0) {
+    @Override
+    public void displayEditItemBookFailed() {
+
+    }
+
+    public boolean checkValid(String bookname, String amount, String author, String price, int positionSpiner, List<String> listPathImages) {
+
+        if (bookname.length() == 0 || author.length() == 0 || amount.length() == 0 || price.length() == 0 || positionSpiner == 0 || listPathImages.size() == 0) {
             return false;
         } else {
             return true;
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUESTCODE) {
+            if (resultCode == getActivity().RESULT_OK && data != null) {
+                listPathImages = data.getStringArrayListExtra("listpath");
+            }
+            if (listPathImages.size() > 0) {
+                displayListImagesBook();
+            }
 
+        }
+    }
+
+    private void displayListImagesBook() {
+        if (listPathImages.size() == 1) {
+            imgChooseImagesBook.setMaxWidth(150);
+            imgChooseImagesBook.setMaxHeight(150);
+            imgChooseImagesBook.setImageURI(Uri.parse(listPathImages.get(0)));
+        }
+        if (listPathImages.size() == 2) {
+            imgChooseImagesBook.setMaxWidth(100);
+            imgChooseImagesBook.setMaxHeight(100);
+            imgChooseImagesBook2.setMaxWidth(100);
+            imgChooseImagesBook2.setMaxHeight(100);
+
+            cardCamera2.setVisibility(View.VISIBLE);
+
+            imgChooseImagesBook.setImageURI(Uri.parse(listPathImages.get(0)));
+            imgChooseImagesBook2.setImageURI(Uri.parse(listPathImages.get(1)));
+        }
+        if (listPathImages.size() == 3) {
+            imgChooseImagesBook.setMaxWidth(100);
+            imgChooseImagesBook.setMaxHeight(100);
+
+            imgChooseImagesBook2.setMaxWidth(100);
+            imgChooseImagesBook2.setMaxHeight(100);
+
+            imgChooseImagesBook3.setMaxWidth(100);
+            imgChooseImagesBook3.setMaxHeight(100);
+
+            cardCamera2.setVisibility(View.VISIBLE);
+            cardCamera3.setVisibility(View.VISIBLE);
+
+
+            imgChooseImagesBook.setImageURI(Uri.parse(listPathImages.get(0)));
+            imgChooseImagesBook2.setImageURI(Uri.parse(listPathImages.get(1)));
+            imgChooseImagesBook3.setImageURI(Uri.parse(listPathImages.get(2)));
+        }
+    }
+
+    private void displayListImagesBookEdit() {
+        int with = 250;
+        if (listPathImages.size() == 1) {
+            imgChooseImagesBook.setMaxWidth(with);
+            imgChooseImagesBook.setMaxHeight(with);
+            storageReference.child(listPathImages.get(0)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    Glide.with(getActivity())
+                            .load(task.getResult().toString())
+                            .into(imgChooseImagesBook);
+                }
+            });
+        }
+        if (listPathImages.size() == 2) {
+            imgChooseImagesBook.setMaxWidth(with);
+            imgChooseImagesBook.setMaxHeight(with);
+            imgChooseImagesBook2.setMaxWidth(with);
+            imgChooseImagesBook2.setMaxHeight(with);
+
+
+            cardCamera2.setVisibility(View.VISIBLE);
+
+            storageReference.child(listPathImages.get(0)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    Glide.with(getActivity())
+                            .load(task.getResult().toString())
+                            .into(imgChooseImagesBook);
+                }
+            });
+            storageReference.child(listPathImages.get(1)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    Glide.with(getActivity())
+                            .load(task.getResult().toString())
+                            .into(imgChooseImagesBook2);
+                }
+            });
+        }
+        if (listPathImages.size() == 3) {
+            imgChooseImagesBook.setMaxWidth(with);
+            imgChooseImagesBook.setMaxHeight(with);
+
+            imgChooseImagesBook2.setMaxWidth(with);
+            imgChooseImagesBook2.setMaxHeight(with);
+
+            imgChooseImagesBook3.setMaxWidth(with);
+            imgChooseImagesBook3.setMaxHeight(with);
+
+
+
+            cardCamera2.setVisibility(View.VISIBLE);
+            cardCamera3.setVisibility(View.VISIBLE);
+
+
+            storageReference.child(listPathImages.get(0)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    Glide.with(getActivity())
+                            .load(task.getResult().toString())
+                            .into(imgChooseImagesBook);
+                }
+            });
+            storageReference.child(listPathImages.get(1)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    Glide.with(getActivity())
+                            .load(task.getResult().toString())
+                            .into(imgChooseImagesBook2);
+                }
+            });
+            storageReference.child(listPathImages.get(2)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    Glide.with(getActivity())
+                            .load(task.getResult().toString())
+                            .into(imgChooseImagesBook3);
+                }
+            });
+        }
+    }
 }

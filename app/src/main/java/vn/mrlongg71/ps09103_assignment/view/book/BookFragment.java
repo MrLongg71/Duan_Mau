@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.developer.kalert.KAlertDialog;
 
@@ -39,6 +40,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     private PresenterBook presenterBook;
     private RecyclerViewBookAdapter recyclerViewBookAdapter;
     private RecyclerView recyclerViewBook;
+    private ProgressBar progressBarBook;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,6 +58,9 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
     private void initView(View view) {
         recyclerViewBook = view.findViewById(R.id.recyclerBook);
+        progressBarBook = view.findViewById(R.id.progressBook);
+        progressBarBook.setVisibility(View.VISIBLE);
+
     }
 
     private void setActionBar() {
@@ -83,7 +88,9 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     }
 
     @Override
-    public void displayListBook(List<Book> bookList,List<TypeBook> typeBookList) {
+    public void displayListBook(ArrayList<Book> bookList,List<TypeBook> typeBookList) {
+        progressBarBook.setVisibility(View.GONE);
+
         recyclerViewBookAdapter = new RecyclerViewBookAdapter(getActivity(), R.layout.custom_book, bookList, typeBookList, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewBook.setLayoutManager(layoutManager);
@@ -91,7 +98,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     }
 
     @Override
-    public void displayListTypeBookSpiner(List<TypeBook> typeBookList) {
+    public void displayListTypeBookSpiner(TypeBook typeBookList) {
 
     }
 
@@ -108,6 +115,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
     @Override
     public void displayDeleteItemBookSuccess() {
+        progressBarBook.setVisibility(View.GONE);
         recyclerViewBookAdapter.notifyDataSetChanged();
         presenterBook.getBook();
         Toasty.success(getActivity(),getString(R.string.success),Toasty.LENGTH_LONG).show();
@@ -119,14 +127,28 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     }
 
     @Override
-    public void onEventDeleteItemClickListenerBook(final int position, final List<Book> bookList) {
+    public void displayEditItemBookSuccess() {
+        progressBarBook.setVisibility(View.GONE);
+        recyclerViewBookAdapter.notifyDataSetChanged();
+        presenterBook.getBook();
+        Toasty.success(getActivity(),getString(R.string.success),Toasty.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void displayEditItemBookFailed() {
+        Toasty.error(getActivity(),getString(R.string.error),Toasty.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    public void onEventDeleteItemClickListenerBook(final int position, final ArrayList<Book> bookList) {
         final Book book = bookList.get(position);
         new KAlertDialog(getActivity(), KAlertDialog.ERROR_TYPE)
                 .setContentText(getActivity().getString(R.string.wantDelete) + " sách " + book.getBookname())
                 .setConfirmClickListener(new KAlertDialog.KAlertClickListener() {
                     @Override
                     public void onClick(KAlertDialog kAlertDialog) {
-                        //progressBarTypeBook.setVisibility(View.VISIBLE);
+                        progressBarBook.setVisibility(View.VISIBLE);
                         presenterBook.getItemDelete(book.getBookcode());
                         bookList.clear();
                         recyclerViewBookAdapter.notifyDataSetChanged();
@@ -144,7 +166,14 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     }
 
     @Override
-    public void onEventEditItemClickListenerBook(int position, List<Book> bookList) {
+    public void onEventEditItemClickListenerBook(int position, ArrayList<Book> bookList) {
+        Bundle bundle = new Bundle();
+        Book book = bookList.get(position);
+        bundle.putParcelable("book" ,  book);
+        AddBookFragment addBookFragment = new AddBookFragment();
+        addBookFragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,addBookFragment).addToBackStack(null).commit();
+
 
     }
 

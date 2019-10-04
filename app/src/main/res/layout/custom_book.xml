@@ -16,12 +16,18 @@
            android:orientation="horizontal"
            android:layout_width="match_parent"
            android:layout_height="wrap_content">
-           <ImageView
+
+           <com.makeramen.roundedimageview.RoundedImageView
                android:id="@+id/imageBook"
-               android:src="@drawable/ic_type_book"
+               android:src="@drawable/book"
+               android:scaleType="fitCenter"
+               android:layout_margin="10dp"
+               app:riv_corner_radius="8dp"
                android:layout_width="150dp"
-               android:layout_height="200dp" />
+               android:layout_height="200dp"
+               />
            <LinearLayout
+               android:layout_marginLeft="10dp"
                android:layout_gravity="center"
                android:orientation="vertical"
                android:layout_width="match_parent"

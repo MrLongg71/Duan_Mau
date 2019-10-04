@@ -19,7 +19,7 @@ import vn.mrlongg71.ps09103_assignment.library.ActionBarLib;
 import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.view.fragment.BillFragment;
 import vn.mrlongg71.ps09103_assignment.view.book.BookFragment;
-import vn.mrlongg71.ps09103_assignment.view.fragment.InfoFragment;
+import vn.mrlongg71.ps09103_assignment.view.manageruser.InfoFragment;
 import vn.mrlongg71.ps09103_assignment.view.fragment.StatisticalFragment;
 import vn.mrlongg71.ps09103_assignment.view.typebook.TypebookFragment;
 

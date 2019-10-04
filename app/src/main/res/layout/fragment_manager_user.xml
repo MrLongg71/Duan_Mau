@@ -1,62 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<RelativeLayout
+    android:padding="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="10dp"
-    android:background="@null"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <LinearLayout
-        android:padding="20dp"
-        android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorGrayline"
+    tools:context=".view.manageruser.ManagerUserFragment">
+
+    <ProgressBar
+        android:id="@+id/progress_TypeBook"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:gravity="center"
-            android:text="@string/addUser"
-            style="@style/AppTheme.TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtEmailnew"
-            android:layout_marginTop="10dp"
-            android:padding="10dp"
-            android:hint="@string/email"
-            android:background="@drawable/custom_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtPassnew"
-            android:layout_marginTop="10dp"
-            android:padding="10dp"
-            android:hint="@string/pass"
-            android:background="@drawable/custom_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:padding="5dp"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/btnAddTypeBookDialog"
-                style="@style/AppTheme.CustomButtonDialog"
-                android:text="Add"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <Button
-                style="@style/AppTheme.CustomButtonDialog"
-                android:text="@string/dialog_cancel"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-    </LinearLayout>
+    </androidx.recyclerview.widget.RecyclerView>
 
 
-</androidx.cardview.widget.CardView>
+</RelativeLayout>

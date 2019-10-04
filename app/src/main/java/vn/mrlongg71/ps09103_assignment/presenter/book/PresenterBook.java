@@ -1,5 +1,6 @@
 package vn.mrlongg71.ps09103_assignment.presenter.book;
 
+import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import vn.mrlongg71.ps09103_assignment.view.book.IViewBook;
 public class PresenterBook implements IPresenterBook{
     private IViewBook iViewBook;
     private ModelBook modelBook;
-    final List<Book> bookList = new ArrayList<>();
+    final ArrayList<Book> bookList = new ArrayList<>();
     final List<TypeBook> typeBookListItem = new ArrayList<>();
     List<TypeBook> typeBookList= new ArrayList<>();
     public PresenterBook(IViewBook iViewBook){
@@ -31,9 +32,9 @@ public class PresenterBook implements IPresenterBook{
         bookList.add(book);
         typeBookListItem.add(typeBook);
         if(bookList.size() != 0 && typeBookListItem.size() != 0){
-            iViewBook.displayListBook(bookList,typeBookListItem);
-        }
+        iViewBook.displayListBook(bookList,typeBookListItem);
     }
+}
 
     @Override
     public void getTypeBook() {
@@ -42,16 +43,20 @@ public class PresenterBook implements IPresenterBook{
 
     @Override
     public void resultgetTypeBook(TypeBook typeBook) {
-        typeBookList.add(typeBook);
-        if(typeBookList.size() != 0){
-            iViewBook.displayListTypeBookSpiner(typeBookList);
-        }
+
+        iViewBook.displayListTypeBookSpiner(typeBook);
+//        typeBookList.add(typeBook);
+//        Log.d("type" , typeBookList.size() + " ");
+//
+//        if(typeBookList.size() > 0){
+//            iViewBook.displayListTypeBookSpiner(typeBookList);
+//        }
     }
 
 
     @Override
-    public void getAddBook(Book book) {
-        modelBook.initAddBook(book,this);
+    public void getAddBook(Book book, List<String> uriList) {
+        modelBook.initAddBook(book,uriList,this);
     }
 
     @Override
@@ -74,6 +79,20 @@ public class PresenterBook implements IPresenterBook{
             iViewBook.displayDeleteItemBookSuccess();
         }else {
             iViewBook.displayDeleteItemBookFailed();
+        }
+    }
+
+    @Override
+    public void getItemEditBook(String key,Book book,List<String> uriList) {
+        modelBook.initEditBook(key,book,this);
+    }
+
+    @Override
+    public void resultEditBook(boolean success) {
+        if(success){
+            iViewBook.displayEditItemBookSuccess();
+        }else {
+            iViewBook.displayEditItemBookFailed();
         }
     }
 }

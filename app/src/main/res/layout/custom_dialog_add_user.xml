@@ -17,6 +17,17 @@
             style="@style/AppTheme.TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageUserAdd"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_user"
+            app:civ_border_color="@color/colorBackgroup"
+            app:civ_border_width="2dp" />
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtEmailAddnew"
             android:layout_marginTop="10dp"
@@ -33,6 +44,31 @@
             android:background="@drawable/custom_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtPhoneAddnew"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:hint="Phone"
+            android:background="@drawable/custom_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtNameAddnew"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:hint="Name"
+            android:background="@drawable/custom_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtDateAddnew"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:hint="Date"
+            android:enabled="false"
+            android:background="@drawable/custom_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <LinearLayout
             android:padding="5dp"
             android:layout_marginTop="5dp"
@@ -40,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
-                android:id="@+id/btnAddTypeBookDialog"
+                android:id="@+id/btnAddUserNewDialog"
                 style="@style/AppTheme.CustomButtonDialog"
                 android:text="Add"
                 android:layout_margin="5dp"

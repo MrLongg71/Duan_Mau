@@ -2,7 +2,9 @@ package vn.mrlongg71.ps09103_assignment.adapter;
 
 import android.content.Context;
 import android.icu.text.NumberFormat;
+import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +18,14 @@ import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.makeramen.roundedimageview.RoundedImageView;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.mrlongg71.ps09103_assignment.R;
@@ -26,11 +36,12 @@ import vn.mrlongg71.ps09103_assignment.presenter.book.IPresenterBookAdapter;
 public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBookAdapter.ViewHolderBook> {
     private Context context;
     private int resource;
-    private List<Book> bookList;
+    private ArrayList<Book> bookList;
     private List<TypeBook> typeBookList;
     private IPresenterBookAdapter iPresenterBookAdapter;
+    private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
 
-    public RecyclerViewBookAdapter(Context context, int resource, List<Book> bookList,List<TypeBook> typeBookList,IPresenterBookAdapter iPresenterBookAdapter) {
+    public RecyclerViewBookAdapter(Context context, int resource, ArrayList<Book> bookList,List<TypeBook> typeBookList,IPresenterBookAdapter iPresenterBookAdapter) {
         this.context = context;
         this.resource = resource;
         this.bookList = bookList;
@@ -40,7 +51,7 @@ public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBo
 
     public class ViewHolderBook extends RecyclerView.ViewHolder {
         CardView cardBook;
-        ImageView imageBook;
+        RoundedImageView imageBook;
         TextView txtBookName,txtTypeBook,txtPrice,txtAmount;
         public ViewHolderBook(@NonNull View itemView) {
             super(itemView);
@@ -71,7 +82,22 @@ public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBo
         String price = numberFormat.format(book.getPrice());
         holder.txtPrice.setText("Giá: "+price);
         holder.txtTypeBook.setText("Loại: "+typeBook.getTypename());
+        setImagesBook(holder.imageBook,book);
         eventCartBook(position,holder);
+    }
+
+    private void setImagesBook(final RoundedImageView imageBook, Book book) {
+        if(book.getArrImagesBook().size() > 0 ){
+            storageReference.child("book").child(book.getArrImagesBook().get(0)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    Glide.with(context)
+                            .load(task.getResult().toString())
+                            .into(imageBook);
+                }
+            });
+
+        }
     }
 
     private void eventCartBook(final int position,final ViewHolderBook holder) {

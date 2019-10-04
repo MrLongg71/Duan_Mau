@@ -1,18 +1,30 @@
 package vn.mrlongg71.ps09103_assignment.model.objectclass;
 
-public class User {
-    private String key,email,name,phone,date;
+import java.util.List;
 
-    public User(String key, String email, String name, String phone, String date) {
+public class User {
+    private String key,email,name,phone,date,image;
+
+
+    public User(String key, String email, String name, String phone, String date,String image) {
         this.key = key;
         this.email = email;
         this.name = name;
         this.phone = phone;
         this.date = date;
+        this.image = image;
     }
 
     public User() {
 
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getKey() {
