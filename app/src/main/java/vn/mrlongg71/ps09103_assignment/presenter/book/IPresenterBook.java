@@ -27,4 +27,6 @@ public interface IPresenterBook {
 
     void getItemEditBook(String key,Book book,List<String> uriList);
     void resultEditBook(boolean success);
+
+
 }

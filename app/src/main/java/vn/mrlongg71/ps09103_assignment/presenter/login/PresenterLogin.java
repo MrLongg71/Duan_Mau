@@ -24,4 +24,18 @@ public class PresenterLogin  implements IPresenterLogin{
             iViewLogin.onFailed();
         }
     }
+
+    @Override
+    public void getEmailResetPassword(String email) {
+        modelLogin.checkEmailExits(email,this);
+    }
+
+    @Override
+    public void resultResetPassword(boolean success,String message) {
+        if(success){
+            iViewLogin.onResetPasswordSuccess();
+        }else {
+            iViewLogin.onResetPasswordFailed(message);
+        }
+    }
 }

@@ -6,10 +6,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import vn.mrlongg71.ps09103_assignment.view.fragment.StaDayFragment;
-import vn.mrlongg71.ps09103_assignment.view.fragment.StaMonthFragment;
-import vn.mrlongg71.ps09103_assignment.view.fragment.StaOtherFragment;
-import vn.mrlongg71.ps09103_assignment.view.fragment.StaYesterdayFragment;
+import vn.mrlongg71.ps09103_assignment.view.statistical.StaDayFragment;
+import vn.mrlongg71.ps09103_assignment.view.statistical.StaMonthFragment;
+import vn.mrlongg71.ps09103_assignment.view.statistical.StaOtherFragment;
+import vn.mrlongg71.ps09103_assignment.view.statistical.StaYesterdayFragment;
 
 public class TablayoutStatisticsAdapter extends FragmentPagerAdapter {
     private Context context;

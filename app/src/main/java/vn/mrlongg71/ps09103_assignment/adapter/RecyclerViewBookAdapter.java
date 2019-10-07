@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,9 +92,11 @@ public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBo
             storageReference.child("book").child(book.getArrImagesBook().get(0)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                 public void onComplete(@NonNull Task<Uri> task) {
-                    Glide.with(context)
-                            .load(task.getResult().toString())
-                            .into(imageBook);
+                     Picasso.get()
+                                .load(task.getResult().toString())
+                                .placeholder(R.drawable.ic_loading)
+                                .error(R.drawable.error_center_x)
+                                .into(imageBook);
                 }
             });
 

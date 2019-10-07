@@ -1,4 +1,4 @@
-package vn.mrlongg71.ps09103_assignment.view.fragment;
+package vn.mrlongg71.ps09103_assignment.view.statistical;
 
 
 import android.os.Bundle;

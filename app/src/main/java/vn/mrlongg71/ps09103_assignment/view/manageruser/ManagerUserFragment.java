@@ -63,8 +63,6 @@ public class ManagerUserFragment extends Fragment implements View.OnClickListene
     private RecyclerView recyclerUser;
     private Dialog dialogAddUser;
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     private final int CAMERA_PIC_REQUEST = 123;
     private final int FILE_PIC_REQUEST = 456;
     private Uri uriFile, uriCamera;
@@ -82,7 +80,7 @@ public class ManagerUserFragment extends Fragment implements View.OnClickListene
         ActionBarLib.setSupportActionBar(getActivity(), getString(R.string.manager));
         setHasOptionsMenu(true);
         progressDialog = new ProgressDialog(getActivity());
-        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog,true);
+        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog, true);
         presenterManagerUser = new PresenterManagerUser(this);
         recyclerUser = view.findViewById(R.id.recyclerUser);
         presenterManagerUser.getListUser();
@@ -100,7 +98,7 @@ public class ManagerUserFragment extends Fragment implements View.OnClickListene
 
             if (uriFile != null) {
                 user.setImage(uriFile.getLastPathSegment());
-                vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog,true);
+                vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog, true);
                 presenterManagerUser.getAddUser(user, edtPassNew.getText().toString().trim());
 
             } else {
@@ -126,13 +124,13 @@ public class ManagerUserFragment extends Fragment implements View.OnClickListene
                 dialogAddUser = new Dialog(getActivity());
                 dialogAddUser.setContentView(R.layout.custom_dialog_add_user);
                 circleImageUserAdd = dialogAddUser.findViewById(R.id.imageUserAdd);
-                edtEmailNew =  dialogAddUser.findViewById(R.id.edtEmailAddnew);
-                edtPassNew =  dialogAddUser.findViewById(R.id.edtPassAddnew);
+                edtEmailNew = dialogAddUser.findViewById(R.id.edtEmailAddnew);
+                edtPassNew = dialogAddUser.findViewById(R.id.edtPassAddnew);
                 edtPhoneNew = dialogAddUser.findViewById(R.id.edtPhoneAddnew);
                 edtNameNew = dialogAddUser.findViewById(R.id.edtNameAddnew);
                 edtDateNew = dialogAddUser.findViewById(R.id.edtDateAddnew);
                 edtDateNew.setText(currentTime);
-                btnAddUserNew =  dialogAddUser.findViewById(R.id.btnAddUserNewDialog);
+                btnAddUserNew = dialogAddUser.findViewById(R.id.btnAddUserNewDialog);
                 btnAddUserNew.setOnClickListener(this);
                 circleImageUserAdd.setOnClickListener(this);
                 dialogAddUser.show();
@@ -161,19 +159,19 @@ public class ManagerUserFragment extends Fragment implements View.OnClickListene
         recyclerUser.setLayoutManager(layoutManager);
         recyclerUser.setAdapter(recyclerViewUserAdapter);
         recyclerViewUserAdapter.notifyDataSetChanged();
-        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog,false);
+        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog, false);
     }
 
     @Override
     public void displayAddUserSuccess() {
-        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog,false);
+        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog, false);
         dialogAddUser.dismiss();
         Toasty.success(getActivity(), getString(R.string.success)).show();
     }
 
     @Override
     public void displayAddUserFailed(String message) {
-        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog,false);
+        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog, false);
         Toasty.error(getActivity(), getString(R.string.error) + " " + message).show();
     }
 

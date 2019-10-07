@@ -19,8 +19,8 @@
 
            <com.makeramen.roundedimageview.RoundedImageView
                android:id="@+id/imageBook"
-               android:src="@drawable/book"
                android:scaleType="fitCenter"
+               android:src="@drawable/ic_loading"
                android:layout_margin="10dp"
                app:riv_corner_radius="8dp"
                android:layout_width="150dp"

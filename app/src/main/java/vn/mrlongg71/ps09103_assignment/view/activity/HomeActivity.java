@@ -6,6 +6,7 @@ import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -14,13 +15,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.library.ActionBarLib;
 import vn.mrlongg71.ps09103_assignment.library.Dialog;
-import vn.mrlongg71.ps09103_assignment.view.fragment.BillFragment;
+import vn.mrlongg71.ps09103_assignment.view.bill.BillFragment;
 import vn.mrlongg71.ps09103_assignment.view.book.BookFragment;
 import vn.mrlongg71.ps09103_assignment.view.manageruser.InfoFragment;
-import vn.mrlongg71.ps09103_assignment.view.fragment.StatisticalFragment;
+import vn.mrlongg71.ps09103_assignment.view.statistical.StatisticalFragment;
 import vn.mrlongg71.ps09103_assignment.view.typebook.TypebookFragment;
 
 public class HomeActivity extends AppCompatActivity
@@ -30,7 +32,8 @@ public class HomeActivity extends AppCompatActivity
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
     private Toolbar toolbar;
-
+    private TextView txtNameNav,txtEmailNav;
+    private CircleImageView imgUserNav;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,8 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.fram, new StatisticalFragment()).commit();
+
+//        txtNameNav.setText("fggffgg");
     }
 
     private void initView() {

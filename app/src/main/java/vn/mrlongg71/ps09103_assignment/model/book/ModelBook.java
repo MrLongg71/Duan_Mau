@@ -129,11 +129,16 @@ public class ModelBook {
         });
     }
 
-    public void initEditBook(String key, Book book, final PresenterBook presenterBook){
+    public void initEditBook(String key, final Book book, final PresenterBook presenterBook, final List<String> uriList){
         noteRoot.child("Book").child(key).setValue(book).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
+                    if(uriList != null){
+                        noteRoot.child("ImagesBookList").child(book.getBookcode()).setValue(null);
+                        uploadImages(book,uriList);
+                        presenterBook.resultEditBook(true);
+                    }
                     presenterBook.resultEditBook(true);
                 }else {
                     presenterBook.resultEditBook(false);

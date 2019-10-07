@@ -19,5 +19,6 @@ public interface IViewBook {
 
     void displayEditItemBookSuccess();
     void displayEditItemBookFailed();
+
 }
 

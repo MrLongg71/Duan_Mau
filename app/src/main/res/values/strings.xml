@@ -4,8 +4,14 @@
     <string name="login_account">Login Account</string>
 
     <!--facebook key-->
-    <string name="facebook_app_id">2085368954917728</string>
-    <string name="fb_login_protocol_scheme">fb2085368954917728</string>
+    <string name="facebook_app_id">703082543437524</string>
+    <string name="fb_login_protocol_scheme">fb703082543437524</string>
+
+
+    <!--Google key-->
+    <!--<string name="default_web_client_id">854062966853-65b8354c45rvt7hs89iukuov68g82mg2.apps.googleusercontent.com</string>-->
+
+
     <string name="title_activity_home">Book Manager</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -50,5 +56,6 @@
     <string name="addUser">Add User</string>
     <string name="pass">Password</string>
     <string name="notthingdata">Notthing Data</string>
+    <string name="change_pass_success">Change your password successfully, check your email</string>
 
 </resources>

@@ -84,7 +84,7 @@ public class PresenterBook implements IPresenterBook{
 
     @Override
     public void getItemEditBook(String key,Book book,List<String> uriList) {
-        modelBook.initEditBook(key,book,this);
+        modelBook.initEditBook(key,book,this,uriList);
     }
 
     @Override

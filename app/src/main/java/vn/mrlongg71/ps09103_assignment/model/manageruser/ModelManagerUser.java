@@ -32,7 +32,7 @@ public class ModelManagerUser {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     user.setKey(auth.getCurrentUser().getUid());
-                    databaseReference.child("User").child(auth.getCurrentUser().getUid()).setValue(user);
+                    databaseReference.child("User").child(user.getKey()).setValue(user);
                     presenterManagerUser.resultAddUser(true,"");
                 } else {
                     presenterManagerUser.resultAddUser(false,task.getException().getMessage());

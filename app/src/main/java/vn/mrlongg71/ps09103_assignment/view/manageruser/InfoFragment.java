@@ -10,12 +10,14 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -91,6 +93,7 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initDowloadInfoUser() {
+
         databaseReference = FirebaseDatabase.getInstance().getReference();
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -107,7 +110,7 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
             }
         };
         databaseReference.child("User").child(auth.getCurrentUser().getUid()).addValueEventListener(valueEventListener);
-
+        Log.d("kiemtra" , "vo " + auth.getCurrentUser().getUid());
     }
 
     private void loadImageUser() {
@@ -132,6 +135,7 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
     private void initEvent() {
         txtManagerUser.setOnClickListener(this);
         imageUserInfo.setOnClickListener(this);
+        txtChangePass.setOnClickListener(this);
     }
 
     @Override
@@ -142,6 +146,9 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.imgUserInfo:
                 openFileImage();
+                break;
+            case R.id.txtChangePass:
+                changePassUser();
                 break;
 
         }
@@ -212,6 +219,19 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
         });
         databaseReference.child("User").child(auth.getCurrentUser().getUid()).child("image").setValue(uriFile.getLastPathSegment());
     }
+
+    private void changePassUser(){
+        auth.sendPasswordResetEmail(auth.getCurrentUser().getEmail())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toasty.success(getActivity(),getString(R.string.change_pass_success) + " " + auth.getCurrentUser().getEmail(),Toasty.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

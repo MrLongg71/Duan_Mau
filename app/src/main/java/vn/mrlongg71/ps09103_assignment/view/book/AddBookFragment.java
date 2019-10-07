@@ -225,7 +225,7 @@ public class AddBookFragment extends Fragment implements IViewBook {
 
     @Override
     public void displayEditItemBookSuccess() {
-        getActivity().getSupportFragmentManager().popBackStack();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,new BookFragment()).commit();
         Toasty.success(getActivity(), getString(R.string.success), Toasty.LENGTH_LONG).show();
     }
 
