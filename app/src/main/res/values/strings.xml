@@ -57,5 +57,12 @@
     <string name="pass">Password</string>
     <string name="notthingdata">Notthing Data</string>
     <string name="change_pass_success">Change your password successfully, check your email</string>
+    <string name="login_admin">Login Admin</string>
+    <string name="enter_phone_nummber">Enter OTP send to phone number 0392350815</string>
+    <string name="number_of_allowed_times">You have confirmed the number of allowed times. Please try again later</string>
+    <string name="choose_products">Choose Products</string>
+    <string name="addBill">Create Bill</string>
+    <string name="addCustomer">Add Customer</string>
+    <string name="add_customer">Add Customer</string>
 
 </resources>

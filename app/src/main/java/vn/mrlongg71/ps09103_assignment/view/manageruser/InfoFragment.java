@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -109,8 +110,9 @@ public class InfoFragment extends Fragment implements View.OnClickListener {
 
             }
         };
-        databaseReference.child("User").child(auth.getCurrentUser().getUid()).addValueEventListener(valueEventListener);
-        Log.d("kiemtra" , "vo " + auth.getCurrentUser().getUid());
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("manager", Context.MODE_PRIVATE);
+        String id = sharedPreferences.getString("id","gRoXFjKkGQNbtjGgr1uJIzrQawp1");
+        databaseReference.child("User").child(id).addValueEventListener(valueEventListener);
     }
 
     private void loadImageUser() {

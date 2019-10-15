@@ -66,7 +66,6 @@ public class ModelBook {
     }
 
 
-
     public void dowloadListTypeBook(final PresenterBook presenterBook){
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override

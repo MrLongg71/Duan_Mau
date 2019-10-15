@@ -23,11 +23,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
 import vn.mrlongg71.ps09103_assignment.R;
+import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.TypeBook;
 import vn.mrlongg71.ps09103_assignment.model.typebook.ModelTypeBook;
 import vn.mrlongg71.ps09103_assignment.presenter.typebook.IPresenterTypeBook;
@@ -41,12 +43,16 @@ public class RecyclerViewTypeBookAdapter extends RecyclerView.Adapter<RecyclerVi
     private int resource;
     private List<TypeBook> typeBookList;
     private IPresenterTypeBookAdapter iPresenterTypeBookAdapter;
+    private List<TypeBook> typeBookListCopy;
 
     public RecyclerViewTypeBookAdapter(Context context, int resource, List<TypeBook> typeBookList, IPresenterTypeBookAdapter iPresenterTypeBookAdapter) {
         this.context = context;
         this.resource = resource;
         this.typeBookList = typeBookList;
         this.iPresenterTypeBookAdapter = iPresenterTypeBookAdapter;
+
+        typeBookListCopy = new ArrayList<>();
+        typeBookListCopy.addAll(typeBookList);
     }
 
 
@@ -112,5 +118,28 @@ public class RecyclerViewTypeBookAdapter extends RecyclerView.Adapter<RecyclerVi
         return typeBookList.size();
     }
 
+    public void search(String text) {
+        text = text.toLowerCase();
+        if (text.length() == 0) {
+            typeBookList.clear();
+
+            typeBookList.addAll(typeBookListCopy);
+            notifyDataSetChanged();
+        } else {
+            typeBookList.clear();
+
+            for (int i = 0; i < typeBookListCopy.size(); i++) {
+                TypeBook typeBook = typeBookListCopy.get(i);
+                if (typeBook.getTypename().toLowerCase().contains(text)) {
+                    typeBookList.add(typeBook);
+                    notifyDataSetChanged();
+                }
+                if (typeBook.getTypecode().toLowerCase().contains(text)) {
+                    typeBookList.add(typeBook);
+                    notifyDataSetChanged();
+                }
+            }
+        }
+    }
 
 }

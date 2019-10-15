@@ -110,16 +110,25 @@
                 android:textAlignment="center" />
 
             <Button
-                android:id="@+id/btnLoginFacebook"
+            android:id="@+id/btnLoginFacebook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnLoginGoogle"
+            android:layout_marginTop="10dp"
+            style="@style/AppTheme.ButtonCustom"
+            android:drawableLeft="@drawable/ic_fb"
+            android:text="@string/login_account"
+            android:textAlignment="center" />
+            <Button
+                android:id="@+id/btnLoginAdmin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btnLoginGoogle"
+                android:layout_below="@+id/btnLoginFacebook"
                 android:layout_marginTop="10dp"
                 style="@style/AppTheme.ButtonCustom"
-                android:drawableLeft="@drawable/ic_fb"
-                android:text="@string/login_account"
+                android:drawableLeft="@drawable/ic_phone"
+                android:text="@string/login_admin"
                 android:textAlignment="center" />
-
 
         </RelativeLayout>
 

@@ -42,18 +42,28 @@ public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBo
     private IPresenterBookAdapter iPresenterBookAdapter;
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
 
-    public RecyclerViewBookAdapter(Context context, int resource, ArrayList<Book> bookList,List<TypeBook> typeBookList,IPresenterBookAdapter iPresenterBookAdapter) {
+
+    private List<Book> bookListCopy = new ArrayList<>();
+    private List<TypeBook> typeBookListCopy = new ArrayList<>();
+
+    public RecyclerViewBookAdapter(Context context, int resource, ArrayList<Book> bookList, List<TypeBook> typeBookList, IPresenterBookAdapter iPresenterBookAdapter) {
         this.context = context;
         this.resource = resource;
         this.bookList = bookList;
         this.typeBookList = typeBookList;
         this.iPresenterBookAdapter = iPresenterBookAdapter;
+
+        bookListCopy.addAll(bookList);
+
+        typeBookListCopy.addAll(typeBookList);
     }
+
 
     public class ViewHolderBook extends RecyclerView.ViewHolder {
         CardView cardBook;
         RoundedImageView imageBook;
-        TextView txtBookName,txtTypeBook,txtPrice,txtAmount;
+        TextView txtBookName, txtTypeBook, txtPrice, txtAmount;
+
         public ViewHolderBook(@NonNull View itemView) {
             super(itemView);
             cardBook = itemView.findViewById(R.id.cardBook);
@@ -64,10 +74,11 @@ public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBo
             txtAmount = itemView.findViewById(R.id.txtAmount);
         }
     }
+
     @NonNull
     @Override
     public ViewHolderBook onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(resource,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
         ViewHolderBook viewHolderBook = new ViewHolderBook(view);
         return viewHolderBook;
     }
@@ -78,32 +89,32 @@ public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBo
         Book book = bookList.get(position);
         TypeBook typeBook = typeBookList.get(position);
         holder.txtBookName.setText(book.getBookname());
-        holder.txtAmount.setText("Số lượng: "+book.getAmount());
+        holder.txtAmount.setText("Số lượng: " + book.getAmount());
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
         String price = numberFormat.format(book.getPrice());
-        holder.txtPrice.setText("Giá: "+price);
-        holder.txtTypeBook.setText("Loại: "+typeBook.getTypename());
-        setImagesBook(holder.imageBook,book);
-        eventCartBook(position,holder);
+        holder.txtPrice.setText("Giá: " + price);
+        holder.txtTypeBook.setText("Loại: " + typeBook.getTypename());
+        setImagesBook(holder.imageBook, book);
+        eventCartBook(position, holder);
     }
 
     private void setImagesBook(final RoundedImageView imageBook, Book book) {
-        if(book.getArrImagesBook().size() > 0 ){
+        if (book.getArrImagesBook().size() > 0) {
             storageReference.child("book").child(book.getArrImagesBook().get(0)).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
+                @Override
                 public void onComplete(@NonNull Task<Uri> task) {
-                     Picasso.get()
-                                .load(task.getResult().toString())
-                                .placeholder(R.drawable.ic_loading)
-                                .error(R.drawable.error_center_x)
-                                .into(imageBook);
+                    Picasso.get()
+                            .load(task.getResult().toString())
+                            .placeholder(R.drawable.ic_loading)
+                            .error(R.drawable.error_center_x)
+                            .into(imageBook);
                 }
             });
 
         }
     }
 
-    private void eventCartBook(final int position,final ViewHolderBook holder) {
+    private void eventCartBook(final int position, final ViewHolderBook holder) {
         holder.cardBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,10 +124,10 @@ public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBo
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.editType) {
-                            iPresenterBookAdapter.onEventEditItemClickListenerBook(position,bookList);
+                            iPresenterBookAdapter.onEventEditItemClickListenerBook(position, bookList);
                         }
                         if (item.getItemId() == R.id.deleteType) {
-                            iPresenterBookAdapter.onEventDeleteItemClickListenerBook(position,bookList);
+                            iPresenterBookAdapter.onEventDeleteItemClickListenerBook(position, bookList);
 
                         }
 
@@ -133,5 +144,28 @@ public class RecyclerViewBookAdapter extends RecyclerView.Adapter<RecyclerViewBo
         return bookList.size();
     }
 
+    public void search(String text) {
+        text = text.toLowerCase();
+        if (text.length() == 0) {
+            bookList.clear();
+            typeBookList.clear();
 
+            bookList.addAll(bookListCopy);
+            typeBookList.addAll(typeBookListCopy);
+            notifyDataSetChanged();
+        } else {
+            bookList.clear();
+            typeBookList.clear();
+
+            for (int i = 0; i < bookListCopy.size(); i++) {
+                Book book = bookListCopy.get(i);
+                TypeBook typeBook = typeBookListCopy.get(i);
+                if (book.getBookname().toLowerCase().contains(text)) {
+                    bookList.add(book);
+                    typeBookList.add(typeBook);
+                    notifyDataSetChanged();
+                }
+            }
+        }
+    }
 }

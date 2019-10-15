@@ -11,4 +11,7 @@ public interface IPresenterManagerUser {
 
     void getAddUser(User user,String password);
     void resultAddUser(boolean success,String message);
+
+    void getDeleteUser(User user);
+    void resultDeleteUser(boolean success,String message);
 }

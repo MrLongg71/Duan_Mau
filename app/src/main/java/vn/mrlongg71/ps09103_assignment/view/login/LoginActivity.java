@@ -5,14 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +28,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -43,7 +44,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.security.MessageDigest;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,13 +56,15 @@ import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.User;
 import vn.mrlongg71.ps09103_assignment.presenter.login.PresenterLogin;
+import vn.mrlongg71.ps09103_assignment.service.IViewConnect;
+import vn.mrlongg71.ps09103_assignment.service.NetworkReceiver;
 import vn.mrlongg71.ps09103_assignment.view.activity.HomeActivity;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener, IViewLogin {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, IViewLogin, IViewConnect {
 
     private CallbackManager callbackManager;
     private Button btnLogin, btnLoginGoogle;
-    private Button btnLoginFacebook, btnSendForgotPassword, btnCancelForgotPassword;
+    private Button btnLoginFacebook, btnSendForgotPassword, btnCancelForgotPassword,btnLoginAdmin;
     private EditText edtEmail, edtPass,edtEmailGetPass;
     private TextView txtForgotPassword, txtEmailForgotPassword;
     private ProgressDialog progressDialog;
@@ -68,8 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private LoginManager loginManager;
     private int RC_SIGN_IN = 123;
     private PresenterLogin presenterLogin;
-
-
+    private BroadcastReceiver broadcastReceiver;
     String TAG = "bb";
 
     @Override
@@ -87,6 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnLogin = findViewById(R.id.btnLogin);
         btnLoginFacebook = findViewById(R.id.btnLoginFacebook);
         btnLoginGoogle = findViewById(R.id.btnLoginGoogle);
+        btnLoginAdmin = findViewById(R.id.btnLoginAdmin);
         edtEmail = findViewById(R.id.edtEmail);
         edtPass = findViewById(R.id.edtPass);
         txtForgotPassword = findViewById(R.id.txtForgotpassword);
@@ -95,15 +101,57 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtEmail.setText("abc456@gmail.com");
         edtPass.setText("123456");
         presenterLogin = new PresenterLogin(LoginActivity.this);
-        initEvent();
     }
 
     private void initEvent() {
-        btnLogin.setOnClickListener(this);
-        btnLoginGoogle.setOnClickListener(this);
-        btnLoginFacebook.setOnClickListener(this);
-        txtForgotPassword.setOnClickListener(this);
+            btnLogin.setOnClickListener(this);
+            btnLoginGoogle.setOnClickListener(this);
+            btnLoginFacebook.setOnClickListener(this);
+            btnLoginAdmin.setOnClickListener(this);
+            txtForgotPassword.setOnClickListener(this);
+
+
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        broadcastReceiver = new NetworkReceiver();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcastReceiver,intentFilter);
+        broadcastReceiver.onReceive(LoginActivity.this,new Intent(LoginActivity.this,NetworkReceiver.class));
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(broadcastReceiver !=null){
+            unregisterReceiver(broadcastReceiver);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NetworkReceiver.EventConnect event) {
+        if(event.isConnect() == true){
+            initEvent();
+        }
+    };
+
 
     private void setupGoogle() {
         googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -118,9 +166,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnLogin:
-                String email = edtEmail.getText().toString().trim();
-                String password = edtPass.getText().toString().trim();
-                doLoginUser(email, password);
+                    String email = edtEmail.getText().toString().trim();
+                    String password = edtPass.getText().toString().trim();
+                    doLoginUser(email, password);
                 break;
             case R.id.txtForgotpassword:
                 initForgotpassword();
@@ -131,7 +179,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnLoginGoogle:
                 signInGoogle();
                 break;
+            case R.id.btnLoginAdmin:
+                signInAdmin();
+                break;
         }
+    }
+
+    private void signInAdmin() {
+        startActivity(new Intent(LoginActivity.this, LoginAdminActivity.class));
     }
 
     private void initForgotpassword() {
@@ -160,10 +215,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void signInGoogle() {
-        Dialog.DialogLoading(progressDialog, true);
-        setupGoogle();
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+            Dialog.DialogLoading(progressDialog, true);
+            setupGoogle();
+            Intent signInIntent = googleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     private void signInFacebook() {
@@ -299,6 +354,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onSuccess() {
         Dialog.DialogLoading(progressDialog, false);
         Toasty.success(LoginActivity.this, getString(R.string.success), Toast.LENGTH_SHORT, true).show();
+        SharedPreferences sharedPreferences = getSharedPreferences("manager", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("admin",false);
+        editor.putString("id", firebaseAuth.getCurrentUser().getUid());
+
+        editor.commit();
         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
     }
 
@@ -317,6 +378,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onResetPasswordFailed(String error) {
         Toasty.error(getApplicationContext(), error, Toasty.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    public void connected() {
 
     }
 }

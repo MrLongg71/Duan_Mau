@@ -1,9 +1,16 @@
 package vn.mrlongg71.ps09103_assignment.view.book;
 
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +28,10 @@ import android.widget.ProgressBar;
 
 import com.developer.kalert.KAlertDialog;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +39,13 @@ import es.dmoral.toasty.Toasty;
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.adapter.RecyclerViewBookAdapter;
 import vn.mrlongg71.ps09103_assignment.library.ActionBarLib;
+import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.TypeBook;
 import vn.mrlongg71.ps09103_assignment.presenter.book.IPresenterBookAdapter;
 import vn.mrlongg71.ps09103_assignment.presenter.book.PresenterBook;
+import vn.mrlongg71.ps09103_assignment.service.NetworkReceiver;
+import vn.mrlongg71.ps09103_assignment.view.login.LoginActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,8 +54,11 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     private PresenterBook presenterBook;
     private RecyclerViewBookAdapter recyclerViewBookAdapter;
     private RecyclerView recyclerViewBook;
-    private ProgressBar progressBarBook;
-
+    private ProgressDialog progressDialog;
+    private BroadcastReceiver broadcastReceiver;
+    private SearchView searchView;
+    private ArrayList<Book> bookListCopy = new ArrayList<>();
+    private List<TypeBook> typeBookListCopy = new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,15 +69,18 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
         initView(view);
         setHasOptionsMenu(true);
         presenterBook = new PresenterBook(this);
+
         presenterBook.getBook();
+
         return view;
     }
 
     private void initView(View view) {
         recyclerViewBook = view.findViewById(R.id.recyclerBook);
-        progressBarBook = view.findViewById(R.id.progressBook);
-        progressBarBook.setVisibility(View.VISIBLE);
-
+        progressDialog = new ProgressDialog(getActivity());
+        broadcastReceiver = new NetworkReceiver();
+        broadcastReceiver = new NetworkReceiver();
+        Dialog.DialogLoading(progressDialog,true);
     }
 
     private void setActionBar() {
@@ -71,7 +91,22 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.custom_menu_add, menu);
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                bookListCopy.clear();
+//                typeBookListCopy.clear();
+                recyclerViewBookAdapter.search(newText);
+                recyclerViewBookAdapter.notifyDataSetChanged();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -80,8 +115,10 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
             case R.id.menu_add_type:
                 AddBookFragment addBookFragment = new AddBookFragment();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram, addBookFragment).addToBackStack(null).commit();
-
                 break;
+//            case R.id.menu_search:
+//
+//                break;
         }
         return super.onOptionsItemSelected(item);
 
@@ -89,8 +126,13 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
     @Override
     public void displayListBook(ArrayList<Book> bookList,List<TypeBook> typeBookList) {
-        progressBarBook.setVisibility(View.GONE);
+//        bookListCopy.clear();
+//        typeBookListCopy.clear();
+//
+//        bookListCopy.addAll(bookList);
+//        typeBookListCopy.addAll(typeBookList);
 
+        Dialog.DialogLoading(progressDialog,false);
         recyclerViewBookAdapter = new RecyclerViewBookAdapter(getActivity(), R.layout.custom_book, bookList, typeBookList, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewBook.setLayoutManager(layoutManager);
@@ -115,7 +157,8 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
     @Override
     public void displayDeleteItemBookSuccess() {
-        progressBarBook.setVisibility(View.GONE);
+        Dialog.DialogLoading(progressDialog,false);
+
         recyclerViewBookAdapter.notifyDataSetChanged();
         presenterBook.getBook();
         Toasty.success(getActivity(),getString(R.string.success),Toasty.LENGTH_LONG).show();
@@ -128,7 +171,8 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
     @Override
     public void displayEditItemBookSuccess() {
-        progressBarBook.setVisibility(View.GONE);
+        Dialog.DialogLoading(progressDialog,false);
+
         recyclerViewBookAdapter.notifyDataSetChanged();
         presenterBook.getBook();
         Toasty.success(getActivity(),getString(R.string.success),Toasty.LENGTH_LONG).show();
@@ -140,6 +184,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
     }
 
+
     @Override
     public void onEventDeleteItemClickListenerBook(final int position, final ArrayList<Book> bookList) {
         final Book book = bookList.get(position);
@@ -148,7 +193,8 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
                 .setConfirmClickListener(new KAlertDialog.KAlertClickListener() {
                     @Override
                     public void onClick(KAlertDialog kAlertDialog) {
-                        progressBarBook.setVisibility(View.VISIBLE);
+                        Dialog.DialogLoading(progressDialog,true);
+
                         presenterBook.getItemDelete(book.getBookcode());
                         bookList.clear();
                         recyclerViewBookAdapter.notifyDataSetChanged();
@@ -173,8 +219,35 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
         AddBookFragment addBookFragment = new AddBookFragment();
         addBookFragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,addBookFragment).addToBackStack(null).commit();
-
-
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(broadcastReceiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NetworkReceiver.EventConnect event) {
+
+        if(event.isConnect() == true){
+            Dialog.DialogLoading(progressDialog,true);
+        }else {
+            Dialog.DialogLoading(progressDialog,false);
+
+        }
+    };
 }

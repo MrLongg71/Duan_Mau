@@ -26,6 +26,7 @@ public class ModelManagerUser {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+
     public void initAddUser(final User user, String password, final PresenterManagerUser presenterManagerUser) {
         auth.createUserWithEmailAndPassword(user.getEmail(), password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -33,9 +34,9 @@ public class ModelManagerUser {
                 if (task.isSuccessful()) {
                     user.setKey(auth.getCurrentUser().getUid());
                     databaseReference.child("User").child(user.getKey()).setValue(user);
-                    presenterManagerUser.resultAddUser(true,"");
+                    presenterManagerUser.resultAddUser(true, "");
                 } else {
-                    presenterManagerUser.resultAddUser(false,task.getException().getMessage());
+                    presenterManagerUser.resultAddUser(false, task.getException().getMessage());
                 }
             }
         });
@@ -77,4 +78,37 @@ public class ModelManagerUser {
 
     }
 
+    public void initDeleteUser(final User user, final PresenterManagerUser presenterManagerUser) {
+        databaseReference.child("User").child(user.getKey()).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                presenterManagerUser.resultDeleteUser(true, "");
+
+                            } else {
+                                presenterManagerUser.resultDeleteUser(false, task.getException().getMessage());
+                            }
+                        }
+                    });
+//        firebaseAuth.getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                if (task.isSuccessful()) {
+//                    databaseReference.child("User").child(user.getKey()).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()) {
+//                                presenterManagerUser.resultDeleteUser(true, "");
+//
+//                            } else {
+//                                presenterManagerUser.resultDeleteUser(false, task.getException().getMessage());
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//        });
+
+
+    }
 }

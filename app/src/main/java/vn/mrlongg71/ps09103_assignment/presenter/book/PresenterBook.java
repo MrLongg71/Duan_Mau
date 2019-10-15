@@ -29,6 +29,9 @@ public class PresenterBook implements IPresenterBook{
 
     @Override
     public void resultgetBook(Book book,TypeBook typeBook) {
+        if(book == null){
+            Log.d("bbb" , "null");
+        }
         bookList.add(book);
         typeBookListItem.add(typeBook);
         if(bookList.size() != 0 && typeBookListItem.size() != 0){

@@ -13,7 +13,7 @@ import vn.mrlongg71.ps09103_assignment.view.manageruser.IViewManagerUser;
 public class PresenterManagerUser implements IPresenterManagerUser {
     private IViewManagerUser iViewManagerUser;
     private ModelManagerUser modelManagerUser;
-    private List<User> userArrayList = new ArrayList<>();
+    private ArrayList<User> userArrayList = new ArrayList<>();
 
     public PresenterManagerUser(IViewManagerUser iViewManagerUser) {
         this.iViewManagerUser = iViewManagerUser;
@@ -45,6 +45,21 @@ public class PresenterManagerUser implements IPresenterManagerUser {
             iViewManagerUser.displayAddUserSuccess();
         } else {
             iViewManagerUser.displayAddUserFailed(message);
+        }
+    }
+
+
+    @Override
+    public void getDeleteUser(User user) {
+        modelManagerUser.initDeleteUser(user,this);
+    }
+
+    @Override
+    public void resultDeleteUser(boolean success, String message) {
+        if(success){
+            iViewManagerUser.displayDeleteUserSuccess();
+        }else {
+            iViewManagerUser.displayDeleteUserFailed(message);
         }
     }
 }
