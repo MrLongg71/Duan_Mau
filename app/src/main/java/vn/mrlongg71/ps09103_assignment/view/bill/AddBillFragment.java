@@ -238,7 +238,7 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
     @Override
     public void onAddSucces() {
         Toasty.success(getActivity(), getString(R.string.success), Toasty.LENGTH_LONG).show();
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,new BillFragment()).commit();
+//        getActivity().getSupportFragmentManager().popB.ackStack();
     }
 
     @Override

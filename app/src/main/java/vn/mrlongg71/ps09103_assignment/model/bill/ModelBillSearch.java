@@ -56,35 +56,5 @@ public class ModelBillSearch {
 
     }
 
-    public void dowloadListTypeBook(final PresenterBillSearch presenterBillSearch){
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                TypeBook typeBook = dataSnapshot.getValue(TypeBook.class);
-                presenterBillSearch.resultgetTypeBook(typeBook);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-        noteRoot.child("TypeBook").addChildEventListener(childEventListener);
-    }
 
 }

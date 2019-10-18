@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.developer.kalert.KAlertDialog;
 
@@ -57,8 +58,8 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     private ProgressDialog progressDialog;
     private BroadcastReceiver broadcastReceiver;
     private SearchView searchView;
-    private ArrayList<Book> bookListCopy = new ArrayList<>();
-    private List<TypeBook> typeBookListCopy = new ArrayList<>();
+    private TextView txtNoData;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
         setHasOptionsMenu(true);
         presenterBook = new PresenterBook(this);
 
-        presenterBook.getBook();
+
 
         return view;
     }
@@ -80,6 +81,8 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
         progressDialog = new ProgressDialog(getActivity());
         broadcastReceiver = new NetworkReceiver();
         broadcastReceiver = new NetworkReceiver();
+        txtNoData = view.findViewById(R.id.txtNoData);
+
         Dialog.DialogLoading(progressDialog,true);
     }
 
@@ -100,8 +103,6 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                bookListCopy.clear();
-//                typeBookListCopy.clear();
                 recyclerViewBookAdapter.search(newText);
                 recyclerViewBookAdapter.notifyDataSetChanged();
                 return false;
@@ -116,9 +117,6 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
                 AddBookFragment addBookFragment = new AddBookFragment();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram, addBookFragment).addToBackStack(null).commit();
                 break;
-//            case R.id.menu_search:
-//
-//                break;
         }
         return super.onOptionsItemSelected(item);
 
@@ -126,17 +124,17 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
     @Override
     public void displayListBook(ArrayList<Book> bookList,List<TypeBook> typeBookList) {
-//        bookListCopy.clear();
-//        typeBookListCopy.clear();
-//
-//        bookListCopy.addAll(bookList);
-//        typeBookListCopy.addAll(typeBookList);
-
         Dialog.DialogLoading(progressDialog,false);
         recyclerViewBookAdapter = new RecyclerViewBookAdapter(getActivity(), R.layout.custom_book, bookList, typeBookList, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerViewBook.setLayoutManager(layoutManager);
         recyclerViewBook.setAdapter(recyclerViewBookAdapter);
+    }
+
+    @Override
+    public void displayListBookFailed() {
+        Dialog.DialogLoading(progressDialog,false);
+        txtNoData.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -147,7 +145,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
     @Override
     public void displayAddBookSucces() {
-
+        Dialog.DialogLoading(progressDialog, false);
     }
 
     @Override
@@ -245,6 +243,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
         if(event.isConnect() == true){
             Dialog.DialogLoading(progressDialog,true);
+            presenterBook.getBook();
         }else {
             Dialog.DialogLoading(progressDialog,false);
 

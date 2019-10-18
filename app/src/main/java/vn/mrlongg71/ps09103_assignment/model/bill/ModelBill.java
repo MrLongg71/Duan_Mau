@@ -1,5 +1,7 @@
 package vn.mrlongg71.ps09103_assignment.model.bill;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
@@ -18,7 +20,11 @@ public class ModelBill {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                DataSnapshot dataBill = dataSnapshot.child("Bill");
+               if(!dataBill.exists()){
+                  presenterBill.resultListBillExits();
+               }
                 for(DataSnapshot valueBill : dataBill.getChildren()){
                     Bill bill = valueBill.getValue(Bill.class);
                     presenterBill.resultListBill(bill);
@@ -27,7 +33,6 @@ public class ModelBill {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         };
         noteBill.addListenerForSingleValueEvent(valueEventListener);

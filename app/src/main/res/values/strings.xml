@@ -64,5 +64,6 @@
     <string name="addBill">Create Bill</string>
     <string name="addCustomer">Add Customer</string>
     <string name="add_customer">Add Customer</string>
+    <string name="no_data">No Data =))</string>
 
 </resources>

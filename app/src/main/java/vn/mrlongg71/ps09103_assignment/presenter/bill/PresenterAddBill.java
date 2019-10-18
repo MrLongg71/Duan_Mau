@@ -10,7 +10,7 @@ import vn.mrlongg71.ps09103_assignment.model.objectclass.BillDetail;
 import vn.mrlongg71.ps09103_assignment.view.bill.IViewBillAdd;
 
 public class PresenterAddBill implements IPresenterAddBill {
-    IViewBillAdd iViewBillAdd;
+        IViewBillAdd iViewBillAdd;
     ModelAddBill modelAddBill;
 
     public PresenterAddBill(IViewBillAdd iViewBillAdd) {
@@ -20,7 +20,6 @@ public class PresenterAddBill implements IPresenterAddBill {
 
     @Override
     public void getAddBill(Bill bill, List<BillDetail> billDetailList) {
-        Log.d("kiemtra123" , billDetailList.size() + "");
         modelAddBill.initAddBill(bill,billDetailList,this);
     }
 

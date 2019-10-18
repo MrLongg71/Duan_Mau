@@ -122,12 +122,24 @@
                                 app:civ_border_width="1dp" />
 
                             <LinearLayout
+                                android:layout_gravity="center_vertical"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
 
                                 <TextView
                                     android:id="@+id/txtCustomerDetailsBill"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="10dp"
+                                    android:text="tên khác "
+                                    android:textColor="#03A9F4"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:id="@+id/txtCustomerPhoneDetailsBill"
+                                    android:layout_gravity="center_vertical"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="10dp"
@@ -156,6 +168,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/txtProducts"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="10dp"

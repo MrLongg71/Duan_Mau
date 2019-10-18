@@ -1,5 +1,7 @@
 package vn.mrlongg71.ps09103_assignment.presenter.bill;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,5 +29,10 @@ public class PresenterBill implements IPresenterBill {
             billList.add(bill);
             iViewPresenterBill.displayListBill(billList);
         }
+    }
+
+    @Override
+    public void resultListBillExits() {
+        iViewPresenterBill.displayListBillFailed();
     }
 }

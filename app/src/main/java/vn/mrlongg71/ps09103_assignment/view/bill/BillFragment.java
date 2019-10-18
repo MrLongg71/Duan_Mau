@@ -22,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,6 +50,7 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
     private PresenterBill presenterBill;
     private SearchView searchView;
     private RecyclerViewBillAdapter recyclerViewBillAdapter;
+    private TextView txtNoData;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
         presenterBill = new PresenterBill(this);
         progressDialog = new ProgressDialog(getActivity());
         recyclerBill = view.findViewById(R.id.recyclerBill);
+        txtNoData = view.findViewById(R.id.txtNoData);
     }
 
     private void setActionBar() {
@@ -96,7 +99,7 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.menu_add_type){
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram, new AddBillFragment()).commit();
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram, new AddBillFragment()).addToBackStack(null).commit();
         }
 
 
@@ -138,6 +141,12 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
         recyclerBill.setAdapter(recyclerViewBillAdapter);
         recyclerViewBillAdapter.notifyDataSetChanged();
         Dialog.DialogLoading(progressDialog,false);
+    }
+
+    @Override
+    public void displayListBillFailed() {
+        Dialog.DialogLoading(progressDialog,false);
+        txtNoData.setVisibility(View.VISIBLE);
     }
 
     @Override

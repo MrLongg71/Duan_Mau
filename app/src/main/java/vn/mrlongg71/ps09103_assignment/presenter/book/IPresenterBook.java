@@ -12,6 +12,7 @@ public interface IPresenterBook {
     //***get List Book***/
     void getBook();
     void resultgetBook(Book book, TypeBook typeBook);
+    void resultgetBookFailed();
 
     void getTypeBook();
     void resultgetTypeBook(TypeBook typeBook);

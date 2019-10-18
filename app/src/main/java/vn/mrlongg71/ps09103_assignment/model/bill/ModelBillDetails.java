@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,7 +33,7 @@ public class ModelBillDetails {
                 BillDetail billDetail;
                 List<Book> bookList = new ArrayList<>();
                 for(DataSnapshot valueBillDetails : dataDetailsBill.getChildren()){
-                    Log.d("nnnn" ," ---------");
+
                     billDetail = valueBillDetails.getValue(BillDetail.class);
                     DataSnapshot dataCustomer = dataSnapshot.child("Customer").child(bill.getCodeCustomer());
                     Customer customer = dataCustomer.getValue(Customer.class);
@@ -70,5 +72,25 @@ public class ModelBillDetails {
 
 
 
+    }
+
+    public void initDeleteBill(final Bill bill, final PresenterBillDetails presenterBillDetails){
+        noteRoot.child("Bill").child(bill.getCodeBillDetail()).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    noteRoot.child("BillDetails").child(bill.getCodeBillDetail()).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                presenterBillDetails.resultDeleteBill(true);
+                            }else{
+                                presenterBillDetails.resultDeleteBill(false);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 }

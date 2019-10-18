@@ -8,6 +8,7 @@ import vn.mrlongg71.ps09103_assignment.model.objectclass.TypeBook;
 
 public interface IViewBook {
     void displayListBook(ArrayList<Book> bookList, List<TypeBook> typeBookList);
+    void displayListBookFailed();
     void displayListTypeBookSpiner(TypeBook typeBook);
 
     void displayAddBookSucces();

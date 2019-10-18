@@ -21,19 +21,6 @@
         android:orientation="vertical">
 
 
-        <androidx.cardview.widget.CardView
-            android:layout_margin="5dp"
-            app:cardCornerRadius="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Spinner
-                android:id="@+id/spChooseTypeBookBill"
-                android:padding="10dp"
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"></Spinner>
-        </androidx.cardview.widget.CardView>
 
 
 

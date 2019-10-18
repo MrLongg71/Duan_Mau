@@ -32,4 +32,19 @@ public class PresenterBillDetails implements IPresenterBillDetails {
         iViewBillDetails.displayBillDetails(billDetailList,customer,user,bookList);
     }
 
+    @Override
+    public void getDeleteBill(Bill bill) {
+        modelBillDetails.initDeleteBill(bill,this);
+    }
+
+    @Override
+    public void resultDeleteBill(boolean success) {
+        if(success){
+            iViewBillDetails.onDeleteSuccess();
+        }else {
+            iViewBillDetails.onDeleteFailed();
+        }
+    }
+
+
 }

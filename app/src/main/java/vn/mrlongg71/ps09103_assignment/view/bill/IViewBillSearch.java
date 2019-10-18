@@ -9,5 +9,4 @@ import vn.mrlongg71.ps09103_assignment.model.objectclass.TypeBook;
 public interface IViewBillSearch {
     void displayListBook(ArrayList<Book> bookList, ArrayList<TypeBook> typeBookList);
 
-    void displayListBook(TypeBook typeBook);
 }

@@ -8,7 +8,5 @@ public interface IPresenterBillSearch {
 
     void resultgetBook(Book book, TypeBook typeBook);
 
-    void getTypeBook();
 
-    void resultgetTypeBook(TypeBook typeBook);
 }

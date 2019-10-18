@@ -1,4 +1,4 @@
- package vn.mrlongg71.ps09103_assignment.view.statistical;
+package vn.mrlongg71.ps09103_assignment.view.statistical.other;
 
 import android.os.Bundle;
 
@@ -10,12 +10,12 @@ import android.view.ViewGroup;
 
 import vn.mrlongg71.ps09103_assignment.R;
 
-public class StaYesterdayFragment extends Fragment {
+public class StaOtherFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sta_yesterday, container, false);
+
+        return inflater.inflate(R.layout.fragment_sta_other, container, false);
     }
 
 }

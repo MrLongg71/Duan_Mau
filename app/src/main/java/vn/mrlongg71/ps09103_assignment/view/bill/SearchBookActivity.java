@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -49,7 +50,6 @@ import vn.mrlongg71.ps09103_assignment.service.NetworkReceiver;
 public class SearchBookActivity extends AppCompatActivity implements IViewBillSearch, View.OnClickListener, IPresenterBillSearchAdapter {
 
     private Toolbar toolbar;
-    private Spinner spChooseTypeBookBill;
     private SpinerAdapter spinerAdapter;
     private List<TypeBook> typeBookList = new ArrayList<>();
     private ArrayList<Book>  bookArrayListItem;
@@ -85,7 +85,7 @@ public class SearchBookActivity extends AppCompatActivity implements IViewBillSe
             public boolean onQueryTextChange(String newText) {
                 bookArrayListItem.clear();
                 recyclerViewBillSearchAdapter.search(newText);
-//                recyclerViewBillSearchAdapter.notifyDataSetChanged();
+                recyclerViewBillSearchAdapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -117,12 +117,12 @@ public class SearchBookActivity extends AppCompatActivity implements IViewBillSe
         progressDialog = new ProgressDialog(this);
         toolbar = findViewById(R.id.toolbar_Search);
         recyclerSearchBook = findViewById(R.id.recyclerBookSearch);
-        spChooseTypeBookBill = findViewById(R.id.spChooseTypeBookBill);
         btnChooseDoneBookBillSearch = findViewById(R.id.btnDoneChooseBookBillSearch);
         btnChooseAgainBookBillSearch = findViewById(R.id.btnChooseAgainBillSearch);
         typeBookList.add(new TypeBook("key", "code", "All item"));
         bookArrayListItem = new ArrayList<>();
         initEvent();
+
     }
 
     private void initEvent() {
@@ -155,7 +155,6 @@ public class SearchBookActivity extends AppCompatActivity implements IViewBillSe
         if (event.isConnect() == true) {
             Dialog.DialogLoading(progressDialog, true);
             presenterBillSearch.getBook();
-            presenterBillSearch.getTypeBook();
         } else {
             Dialog.DialogLoading(progressDialog, false);
 
@@ -171,13 +170,8 @@ public class SearchBookActivity extends AppCompatActivity implements IViewBillSe
         recyclerSearchBook.setAdapter(recyclerViewBillSearchAdapter);
     }
 
-    @Override
-    public void displayListBook(TypeBook typeBook) {
-        typeBookList.add(typeBook);
-        spinerAdapter = new SpinerAdapter(SearchBookActivity.this, R.layout.custom_spiner, typeBookList);
-        spChooseTypeBookBill.setAdapter(spinerAdapter);
 
-    }
+
 
     @Override
     public void onClick(View v) {

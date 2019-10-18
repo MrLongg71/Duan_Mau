@@ -38,6 +38,9 @@ public class ModelBook {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot dataBook = dataSnapshot.child("Book");
+                if(!dataBook.exists()){
+                    presenterBook.resultgetBookFailed();
+                }
                 for(DataSnapshot valueBook : dataBook.getChildren()){
                     final Book book = valueBook.getValue(Book.class);
 

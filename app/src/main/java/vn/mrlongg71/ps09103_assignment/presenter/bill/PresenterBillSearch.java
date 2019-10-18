@@ -35,14 +35,5 @@ public class PresenterBillSearch implements IPresenterBillSearch {
 
     }
 
-    @Override
-    public void getTypeBook() {
-        modelBillSearch.dowloadListTypeBook(this);
-    }
 
-    @Override
-    public void resultgetTypeBook(TypeBook typeBook) {
-
-        iViewBillSearch.displayListBook(typeBook);
-    }
 }

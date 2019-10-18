@@ -14,4 +14,7 @@ public interface IPresenterBillDetails {
     void getBillDetails(Bill bill);
 
     void resultGetBillDetails(BillDetail billDetail, Customer customer, User user, List<Book> bookList);
+
+    void getDeleteBill(Bill bill);
+    void resultDeleteBill(boolean success);
 }

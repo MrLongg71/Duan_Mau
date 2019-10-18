@@ -29,8 +29,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.logging.SimpleFormatter;
 
 import es.dmoral.toasty.Toasty;
 import vn.mrlongg71.ps09103_assignment.R;
@@ -55,10 +58,10 @@ public class AddBookFragment extends Fragment implements IViewBook {
     private int positionSpiner = 0;
     private List<TypeBook> typeBookLists;
     private ArrayList<Book> bookArrayList;
-    private int position = 0;
     private int REQUESTCODE = 123;
     private Bundle bundle;
     private boolean click = false;
+    private Calendar calendar;
     private List<String> listPathImages = new ArrayList<>();
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("book");
 
@@ -172,6 +175,9 @@ public class AddBookFragment extends Fragment implements IViewBook {
                         book.setAmount(edtAmount.getText().toString().trim());
                         book.setAuthor(edtAuthor.getText().toString().trim());
 
+                        calendar = calendar.getInstance();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                        book.setDate(simpleDateFormat.format(calendar.getTime()));
                         double price = Double.parseDouble(pricestr);
                         book.setPrice(price);
                         book.setTypecode(typeBookLists.get(positionSpiner).getKey());
@@ -188,6 +194,11 @@ public class AddBookFragment extends Fragment implements IViewBook {
 
     @Override
     public void displayListBook(ArrayList<Book> bookList, List<TypeBook> typeBookList) {
+
+    }
+
+    @Override
+    public void displayListBookFailed() {
 
     }
 
