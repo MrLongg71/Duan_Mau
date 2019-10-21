@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +40,7 @@ import es.dmoral.toasty.Toasty;
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.adapter.SpinerAdapter;
 import vn.mrlongg71.ps09103_assignment.library.Dialog;
+import vn.mrlongg71.ps09103_assignment.library.PopBack;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.TypeBook;
 import vn.mrlongg71.ps09103_assignment.presenter.book.PresenterBook;
@@ -64,7 +66,7 @@ public class AddBookFragment extends Fragment implements IViewBook {
     private Calendar calendar;
     private List<String> listPathImages = new ArrayList<>();
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("book");
-
+    private FragmentManager fragmentManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +75,8 @@ public class AddBookFragment extends Fragment implements IViewBook {
         initView(view);
         initEventAdd();
         initEventEdit();
+        fragmentManager = getActivity().getSupportFragmentManager();
+        PopBack.callBack(view,fragmentManager);
         return view;
     }
 
@@ -158,9 +162,12 @@ public class AddBookFragment extends Fragment implements IViewBook {
 
     private void initEventAdd() {
         if (bundle == null) {
+
             btnAddBook.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Dialog.DialogLoading(progressDialog,true);
+
                     positionSpiner = spinnerTypeBook.getSelectedItemPosition();
                     String bookname = edtBookName.getText().toString().trim();
                     String author = edtAuthor.getText().toString().trim();
@@ -213,9 +220,8 @@ public class AddBookFragment extends Fragment implements IViewBook {
     @Override
     public void displayAddBookSucces() {
         Dialog.DialogLoading(progressDialog, false);
-        getActivity().getSupportFragmentManager().popBackStack();
         Toasty.success(getActivity(), getString(R.string.success), Toasty.LENGTH_LONG).show();
-
+        fragmentManager.popBackStack();
     }
 
     @Override
@@ -259,6 +265,7 @@ public class AddBookFragment extends Fragment implements IViewBook {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUESTCODE) {
             if (resultCode == getActivity().RESULT_OK && data != null) {
+                listPathImages.clear();
                 listPathImages = data.getStringArrayListExtra("listpath");
             }
             if (listPathImages.size() > 0) {

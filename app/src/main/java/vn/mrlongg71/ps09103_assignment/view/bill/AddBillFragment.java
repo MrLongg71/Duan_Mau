@@ -1,6 +1,7 @@
 package vn.mrlongg71.ps09103_assignment.view.bill;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,6 +39,7 @@ import java.util.Random;
 import es.dmoral.toasty.Toasty;
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.adapter.RecyclerItemBookBillAdapter;
+import vn.mrlongg71.ps09103_assignment.library.PopBack;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Bill;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.BillDetail;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
@@ -63,13 +66,15 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
     private String noteDetailsBill = "";
     private Customer customer;
     private double totalMoney = 0;
-    private HomeActivity homeActivity = new HomeActivity();
+    private FragmentManager fragmentManager;
+    private ProgressDialog progressDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_bill, container, false);
         initView(view);
         setHasOptionsMenu(true);
+        PopBack.callBack(view, fragmentManager);
         return view;
     }
 
@@ -83,7 +88,9 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
         txtAddCustomer = view.findViewById(R.id.txtAddCustomer);
         recyclerItemBookBill = view.findViewById(R.id.recyclerItemBookBill);
         btnCreateBill = view.findViewById(R.id.btnCreateBill);
+        progressDialog = new ProgressDialog(getActivity());
         presenterAddBill = new PresenterAddBill(this);
+        fragmentManager = getActivity().getSupportFragmentManager();
         initEvent();
 
     }
@@ -156,6 +163,8 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
                 startActivityForResult(new Intent(getActivity(), SearchBookActivity.class), REQUES_CODE);
                 break;
             case R.id.btnCreateBill:
+                vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog,true);
+
                 initCreateBill();
                 break;
             case R.id.txtAddDetail:
@@ -237,8 +246,10 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
 
     @Override
     public void onAddSucces() {
+        vn.mrlongg71.ps09103_assignment.library.Dialog.DialogLoading(progressDialog,false);
+
         Toasty.success(getActivity(), getString(R.string.success), Toasty.LENGTH_LONG).show();
-//        getActivity().getSupportFragmentManager().popB.ackStack();
+       fragmentManager.popBackStack();
     }
 
     @Override

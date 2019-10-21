@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,6 +34,7 @@ import java.util.List;
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.adapter.RecyclerViewBillAdapter;
 import vn.mrlongg71.ps09103_assignment.library.ActionBarLib;
+import vn.mrlongg71.ps09103_assignment.library.CallBackFragment;
 import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Bill;
 import vn.mrlongg71.ps09103_assignment.presenter.bill.IPresenterBillAdapter;
@@ -51,6 +53,7 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
     private SearchView searchView;
     private RecyclerViewBillAdapter recyclerViewBillAdapter;
     private TextView txtNoData;
+    private FragmentManager fragmentManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
         View view = inflater.inflate(R.layout.fragment_bill, container, false);
         setActionBar();
         initView(view);
+        CallBackFragment.Callback(view,fragmentManager);
 
         return view;
 
@@ -70,6 +74,7 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
         progressDialog = new ProgressDialog(getActivity());
         recyclerBill = view.findViewById(R.id.recyclerBill);
         txtNoData = view.findViewById(R.id.txtNoData);
+        fragmentManager = getActivity().getSupportFragmentManager();
     }
 
     private void setActionBar() {
@@ -156,7 +161,7 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
             bundle.putParcelable("billdetails", bill);
             DetailsBillFragment detailsBillFragment = new DetailsBillFragment();
             detailsBillFragment.setArguments(bundle);
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,detailsBillFragment).commit();
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,detailsBillFragment).addToBackStack(null).commit();
         }
     }
 }

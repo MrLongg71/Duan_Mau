@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +29,7 @@ import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.adapter.RecyclerViewBillDetailsAdapter;
 import vn.mrlongg71.ps09103_assignment.library.ActionBarLib;
 import vn.mrlongg71.ps09103_assignment.library.Dialog;
+import vn.mrlongg71.ps09103_assignment.library.PopBack;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Bill;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.BillDetail;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
@@ -45,7 +47,7 @@ public class DetailsBillFragment extends Fragment implements IViewBillDetails {
     private RecyclerView recyclerDetailsBill;
     private Bill bill;
     private ProgressDialog progressDialog;
-
+    private FragmentManager fragmentManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class DetailsBillFragment extends Fragment implements IViewBillDetails {
         setHasOptionsMenu(true);
         setActionToolbar();
         initGetBill();
+        PopBack.callBack(view,fragmentManager);
         return view;
     }
 
@@ -83,6 +86,7 @@ public class DetailsBillFragment extends Fragment implements IViewBillDetails {
         txtCustomerPhoneDetailsBill = view.findViewById(R.id.txtCustomerPhoneDetailsBill);
         recyclerDetailsBill = view.findViewById(R.id.recyclerDetailsBill);
         progressDialog = new ProgressDialog(getActivity());
+        fragmentManager = getActivity().getSupportFragmentManager();
     }
 
 
@@ -134,7 +138,7 @@ public class DetailsBillFragment extends Fragment implements IViewBillDetails {
     @Override
     public void onDeleteSuccess() {
         Toasty.success(getActivity(),getString(R.string.success),Toasty.LENGTH_SHORT).show();
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,new BillFragment()).commit();
+        fragmentManager.popBackStack();
     }
 
     @Override

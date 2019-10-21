@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,6 +41,7 @@ import es.dmoral.toasty.Toasty;
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.adapter.RecyclerViewBookAdapter;
 import vn.mrlongg71.ps09103_assignment.library.ActionBarLib;
+import vn.mrlongg71.ps09103_assignment.library.CallBackFragment;
 import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.TypeBook;
@@ -59,6 +61,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     private BroadcastReceiver broadcastReceiver;
     private SearchView searchView;
     private TextView txtNoData;
+    private FragmentManager fragmentManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +72,8 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
         setActionBar();
         initView(view);
         setHasOptionsMenu(true);
+        CallBackFragment.Callback(view,fragmentManager);
+
         presenterBook = new PresenterBook(this);
 
 
@@ -82,7 +87,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
         broadcastReceiver = new NetworkReceiver();
         broadcastReceiver = new NetworkReceiver();
         txtNoData = view.findViewById(R.id.txtNoData);
-
+        fragmentManager = getActivity().getSupportFragmentManager();
         Dialog.DialogLoading(progressDialog,true);
     }
 

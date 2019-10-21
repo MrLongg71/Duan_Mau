@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.library.Chart;
+import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Bill;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.BillDetail;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
@@ -39,6 +41,7 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
          inflater.inflate(R.layout.fragment_sta_yesterday, container, false);
         initView(view);
         presenterStatistical.getListBill(0,0);
+        callBack(view);
         return view;
     }
 
@@ -50,6 +53,22 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
         presenterStatistical = new PresenterStatistical(this);
     }
 
+     private void callBack(View view){
+         view.setFocusableInTouchMode(true);
+         view.requestFocus();
+         view.setOnKeyListener(new View.OnKeyListener() {
+             @Override
+             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                     if (keyCode == KeyEvent.KEYCODE_BACK) {
+                         Dialog.DialogExit(getActivity(),getString(R.string.wantExit),"");
+                         return true;
+                     }
+                 }
+                 return false;
+             }
+         });
+     }
 
      @Override
      public void onStatisticalDay(List<Bill> billListDay, List<BillDetail> billDetailList, List<Book> bookList) {

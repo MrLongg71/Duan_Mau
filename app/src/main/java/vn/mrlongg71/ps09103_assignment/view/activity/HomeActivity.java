@@ -91,17 +91,20 @@ public class HomeActivity extends AppCompatActivity
 
                 break;
             case R.id.nav_type:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fram, new TypebookFragment()).commit();
+                TypebookFragment typebookFragment = new TypebookFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fram,typebookFragment ,typebookFragment.getTag()).commit();
 
                 break;
             case R.id.nav_book:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fram, new BookFragment()).commit();
+                BookFragment bookFragment = new BookFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fram, bookFragment,bookFragment.getTag()).commit();
                 break;
             case R.id.nav_bill:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fram, new BillFragment()).commit();
                 break;
             case R.id.nav_info:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fram, new InfoFragment()).commit();
+                InfoFragment infoFragment = new InfoFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fram, infoFragment,infoFragment.getTag()).commit();
                 break;
             case R.id.nav_exit:
                 Dialog.DialogExit(HomeActivity.this, getString(R.string.warning), getString(R.string.wantExit));
