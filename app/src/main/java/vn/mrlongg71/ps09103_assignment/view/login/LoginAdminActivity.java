@@ -57,14 +57,6 @@ public class LoginAdminActivity extends AppCompatActivity implements TextWatcher
         edtOTP5 = findViewById(R.id.edtOTP5);
         edtOTP6 = findViewById(R.id.edtOTP6);
 
-        edtPhoneAdmin.setText("0392350814");
-        edtOTP1.setText("1");
-        edtOTP2.setText("2");
-        edtOTP3.setText("3");
-        edtOTP4.setText("4");
-        edtOTP5.setText("5");
-        edtOTP6.setText("6");
-
         edtPhoneAdmin.addTextChangedListener(this);
         presenterLoginAdmin = new PresenterLoginAdmin(this);
     }

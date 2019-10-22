@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupMenu;
@@ -84,6 +86,8 @@ public class RecyclerViewTypeBookAdapter extends RecyclerView.Adapter<RecyclerVi
         holder.txtTypeCode.setText(typeBook.getTypecode());
         holder.txtTypeName.setText(typeBook.getTypename());
         eventCartType(holder, position);
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.cusstom_right_left);
+        holder.itemView.startAnimation(animation);
 
     }
 

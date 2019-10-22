@@ -1,6 +1,7 @@
 package vn.mrlongg71.ps09103_assignment.model.book;
 
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -30,30 +31,33 @@ import vn.mrlongg71.ps09103_assignment.model.objectclass.TypeBook;
 import vn.mrlongg71.ps09103_assignment.presenter.book.PresenterBook;
 
 public class ModelBook {
+    boolean upload = false;
+
     DatabaseReference noteRoot = FirebaseDatabase.getInstance().getReference();
     StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    public void dowloadListBook(final PresenterBook presenterBook){
+
+    public void dowloadListBook(final PresenterBook presenterBook) {
 
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot dataBook = dataSnapshot.child("Book");
-                if(!dataBook.exists()){
+                if (!dataBook.exists()) {
                     presenterBook.resultgetBookFailed();
                 }
-                for(DataSnapshot valueBook : dataBook.getChildren()){
+                for (DataSnapshot valueBook : dataBook.getChildren()) {
                     final Book book = valueBook.getValue(Book.class);
 
                     DataSnapshot dataImagesBook = dataSnapshot.child("ImagesBookList").child(book.getBookcode());
                     List<String> arrImagesBook = new ArrayList<>();
-                    for(DataSnapshot valueImagesBook : dataImagesBook.getChildren()){
+                    for (DataSnapshot valueImagesBook : dataImagesBook.getChildren()) {
                         arrImagesBook.add(valueImagesBook.getValue(String.class));
                     }
                     book.setArrImagesBook(arrImagesBook);
 
-                    DataSnapshot dataType =  dataSnapshot.child("TypeBook").child(book.getTypecode());
+                    DataSnapshot dataType = dataSnapshot.child("TypeBook").child(book.getTypecode());
                     TypeBook typeBook = dataType.getValue(TypeBook.class);
-                    presenterBook.resultgetBook(book,typeBook);
+                    presenterBook.resultgetBook(book, typeBook);
 
                 }
             }
@@ -69,7 +73,7 @@ public class ModelBook {
     }
 
 
-    public void dowloadListTypeBook(final PresenterBook presenterBook){
+    public void dowloadListTypeBook(final PresenterBook presenterBook) {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -97,20 +101,34 @@ public class ModelBook {
 
             }
         };
-       noteRoot.child("TypeBook").addChildEventListener(childEventListener);
+        noteRoot.child("TypeBook").addChildEventListener(childEventListener);
     }
 
-    public void initAddBook(final Book book, final List<String> uriList, final PresenterBook presenterBook){
+    public void initAddBook(final Book book, final List<String> uriList, final PresenterBook presenterBook) {
         final String key = noteRoot.child("Book").push().getKey();
         book.setBookcode(key);
 
         noteRoot.child("Book").child(key).setValue(book).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    uploadImages(book,uriList);
-                    presenterBook.resultAddBook(true);
-                }else {
+                if (task.isSuccessful()) {
+                    uploadImages(book, uriList);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            presenterBook.resultAddBook(true);
+                        }
+                    },3000);
+
+                    Log.d("kiemtra456 ", upload + "");
+//                    if (upload == true) {
+//                        presenterBook.resultAddBook(true);
+//                    }
+////                    } else {
+////                        presenterBook.resultAddBook(false);
+////                    }
+
+                } else {
                     presenterBook.resultAddBook(false);
                 }
             }
@@ -118,51 +136,58 @@ public class ModelBook {
 
     }
 
-    public void initDeleteBook(String key, final PresenterBook presenterBook){
+    public void initDeleteBook(String key, final PresenterBook presenterBook) {
         noteRoot.child("Book").child(key).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     presenterBook.resultDeleteTypeBook(true);
-                }else {
+                } else {
                     presenterBook.resultDeleteTypeBook(false);
                 }
             }
         });
     }
 
-    public void initEditBook(String key, final Book book, final PresenterBook presenterBook, final List<String> uriList){
+    public void initEditBook(String key, final Book book, final PresenterBook presenterBook, final List<String> uriList) {
         noteRoot.child("Book").child(key).setValue(book).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    if(uriList != null){
+                if (task.isSuccessful()) {
+                    if (uriList != null) {
                         noteRoot.child("ImagesBookList").child(book.getBookcode()).setValue(null);
-                        uploadImages(book,uriList);
+                        uploadImages(book, uriList);
                         presenterBook.resultEditBook(true);
                     }
                     presenterBook.resultEditBook(true);
-                }else {
+                } else {
                     presenterBook.resultEditBook(false);
                 }
             }
         });
     }
 
-    public void uploadImages(Book book,List<String> uriList){
+    public void uploadImages(Book book, List<String> uriList) {
 
-        for(final String valueUri : uriList){
+        for (final String valueUri : uriList) {
             Uri uri = Uri.fromFile(new File(valueUri));
-            storageReference.child("book/" + uri.getLastPathSegment()).putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            storageReference.child("book/" + uri.getLastPathSegment()).putFile(uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
+                    upload = true;
+                    Log.d("kiemtra456", taskSnapshot.getMetadata().getPath());
                 }
-            });
+            })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            upload = false;
+                        }
+                    });
         }
-        for(String nameImages : uriList){
+        for (String nameImages : uriList) {
             noteRoot.child("ImagesBookList").child(book.getBookcode()).push().setValue(Uri.parse(nameImages).getLastPathSegment());
-
         }
 
     }

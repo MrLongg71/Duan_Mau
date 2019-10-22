@@ -21,6 +21,10 @@
             android:id="@+id/nav_bill"
             android:icon="@drawable/ic_bill"
             android:title="@string/menu_bill" />
+        <item
+            android:id="@+id/nav_rss"
+            android:icon="@drawable/ic_bill"
+            android:title="RSS" />
 
     <item android:title="Information">
         <menu>

@@ -101,7 +101,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edtEmail.setText("abc456@gmail.com");
         edtPass.setText("123456");
         presenterLogin = new PresenterLogin(LoginActivity.this);
-        initEvent();
     }
 
     private void initEvent() {
@@ -115,43 +114,43 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        broadcastReceiver = new NetworkReceiver();
-//        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-//        registerReceiver(broadcastReceiver,intentFilter);
-//        broadcastReceiver.onReceive(LoginActivity.this,new Intent(LoginActivity.this,NetworkReceiver.class));
-//
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        if(broadcastReceiver !=null){
-//            unregisterReceiver(broadcastReceiver);
-//        }
-//    }
-//
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        EventBus.getDefault().register(this);
-//
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        EventBus.getDefault().unregister(this);
-//    }
-//
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onMessageEvent(NetworkReceiver.EventConnect event) {
-//        if(event.isConnect() == true){
-//            initEvent();
-//        }
-//    };
+    @Override
+    protected void onResume() {
+        super.onResume();
+        broadcastReceiver = new NetworkReceiver();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(broadcastReceiver,intentFilter);
+        broadcastReceiver.onReceive(LoginActivity.this,new Intent(LoginActivity.this,NetworkReceiver.class));
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(broadcastReceiver !=null){
+            unregisterReceiver(broadcastReceiver);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NetworkReceiver.EventConnect event) {
+        if(event.isConnect() == true){
+            initEvent();
+        }
+    };
 
 
     private void setupGoogle() {

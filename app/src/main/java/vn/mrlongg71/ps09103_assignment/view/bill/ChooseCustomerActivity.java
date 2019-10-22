@@ -110,6 +110,8 @@ public class ChooseCustomerActivity extends AppCompatActivity implements IViewCh
         });
         if(place != null){
             edtPlaceCustomer.setText(place.getName());
+        }else {
+            edtPlaceCustomer.setText("null");
         }
 
         btnAddCustomerNewDialog.setOnClickListener(new View.OnClickListener() {
