@@ -1,5 +1,7 @@
 package vn.mrlongg71.ps09103_assignment.model.bill;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,18 +27,15 @@ public class ModelAddBill {
                     for(BillDetail valueBillDetail : billDetailList){
                         String codeDetail = dataBill.push().getKey();
                         valueBillDetail.setCode(codeDetail);
-                        dataBill.child("BillDetails").child(code).child(codeDetail).setValue(valueBillDetail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    presenterAddBill.resultAddbill(true);
-                                }else {
-                                    presenterAddBill.resultAddbill(false);
-                                }
-                            }
-                        });
+                        dataBill.child("BillDetails").child(code).child(codeDetail).setValue(valueBillDetail);
+
                     }
 
+                        presenterAddBill.resultAddbill(true);
+
+
+                }else {
+                    presenterAddBill.resultAddbill(false);
                 }
             }
         });

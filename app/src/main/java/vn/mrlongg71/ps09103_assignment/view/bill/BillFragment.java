@@ -62,14 +62,15 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
         setActionBar();
         initView(view);
         CallBackFragment.Callback(view,fragmentManager);
-
+        presenterBill.getListBill();
+        setHasOptionsMenu(true);
         return view;
 
 
     }
 
     private void initView(View view) {
-        broadcastReceiver = new NetworkReceiver();
+//        broadcastReceiver = new NetworkReceiver();
         presenterBill = new PresenterBill(this);
         progressDialog = new ProgressDialog(getActivity());
         recyclerBill = view.findViewById(R.id.recyclerBill);
@@ -110,33 +111,33 @@ public class BillFragment extends Fragment implements IViewPresenterBill, IPrese
 
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().registerReceiver(broadcastReceiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(NetworkReceiver.EventConnect event) {
-
-        if(event.isConnect() == true){
-            Dialog.DialogLoading(progressDialog,true);
-            setHasOptionsMenu(true);
-            presenterBill.getListBill();
-        }else {
-            Dialog.DialogLoading(progressDialog,false);
-
-        }
-    };
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        EventBus.getDefault().register(this);
+//    }
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        EventBus.getDefault().unregister(this);
+//    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        getActivity().registerReceiver(broadcastReceiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+//    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onMessageEvent(NetworkReceiver.EventConnect event) {
+//
+//        if(event.isConnect() == true){
+//            Dialog.DialogLoading(progressDialog,true);
+//            setHasOptionsMenu(true);
+//
+//        }else {
+//            Dialog.DialogLoading(progressDialog,false);
+//
+//        }
+//    };
 
     @Override
     public void displayListBill(List<Bill> billList) {

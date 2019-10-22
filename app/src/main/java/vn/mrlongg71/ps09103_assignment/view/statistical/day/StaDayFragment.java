@@ -1,6 +1,7 @@
 package vn.mrlongg71.ps09103_assignment.view.statistical.day;
 
 
+import android.app.ProgressDialog;
 import android.icu.text.NumberFormat;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import java.util.Locale;
 
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.library.Chart;
+import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Bill;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.BillDetail;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
@@ -39,6 +41,7 @@ public class StaDayFragment extends Fragment implements IViewStatistical {
     private String dayCurrent = "";
     private Calendar calendar;
     private PieChart chartDay;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -47,6 +50,7 @@ public class StaDayFragment extends Fragment implements IViewStatistical {
         // Inflate the layout for this fragment
         presenterStatistical = new PresenterStatistical(this);
         presenterStatistical.getListBill(1,0);
+//        presenterStatistical.initStatisticalDay();
         View view = inflater.inflate(R.layout.fragment_sta_day, container, false);
         initView(view);
         return view;
@@ -57,6 +61,7 @@ public class StaDayFragment extends Fragment implements IViewStatistical {
         txtChiDay = view.findViewById(R.id.txtChiDay);
         txtThuDay = view.findViewById(R.id.txtThuDay);
         calendar = calendar.getInstance();
+        progressDialog = new ProgressDialog(getActivity());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         dayCurrent = simpleDateFormat.format(calendar.getTime());
         chartDay = view.findViewById(R.id.chartDay);
@@ -95,6 +100,7 @@ public class StaDayFragment extends Fragment implements IViewStatistical {
     @Override
     public void onStatisticalFailed() {
         Chart.addDataSet(chartDay,0,0,00);
+        Dialog.DialogLoading(progressDialog,false);
 
     }
 }

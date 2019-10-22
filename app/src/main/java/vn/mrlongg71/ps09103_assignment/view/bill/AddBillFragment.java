@@ -29,6 +29,11 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,10 +69,14 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
     private TextView txtTotalBook, txtTotalMoney, txtTotal,txtAddDetail,txtAddCustomer;
     private PresenterAddBill presenterAddBill;
     private String noteDetailsBill = "";
+    private String codeUser;
+    private String billCode;
+    private String currentTime;
     private Customer customer;
     private double totalMoney = 0;
     private FragmentManager fragmentManager;
     private ProgressDialog progressDialog;
+    private Bill bill = new Bill();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,6 +100,14 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
         progressDialog = new ProgressDialog(getActivity());
         presenterAddBill = new PresenterAddBill(this);
         fragmentManager = getActivity().getSupportFragmentManager();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("manager", Context.MODE_PRIVATE);
+         codeUser = sharedPreferences.getString("id", "");
+        Random random = new Random();
+        int detail = random.nextInt();
+         billCode = "DH" + detail;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        currentTime = sdf.format(calendar.getTime());
         initEvent();
 
     }
@@ -212,14 +229,9 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
     }
 
     private void initCreateBill() {
-        Random random = new Random();
-        int detail = random.nextInt();
-        String billCode = "DH" + detail;
-        if (bookArrayListItem.size() != 0) {
 
-            Bill bill = new Bill();
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("manager", Context.MODE_PRIVATE);
-            String codeUser = sharedPreferences.getString("id", "");
+        if (billDetailList.size() != 0) {
+
             bill.setCode(billCode);
             bill.setCodeUser(codeUser);
             bill.setTotalPrice(totalMoney);
@@ -234,14 +246,12 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
             }else {
                 bill.setNote("");
             }
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-            String currentTime = sdf.format(calendar.getTime());
+
+
             bill.setDateCreate(currentTime);
             presenterAddBill.getAddBill(bill, billDetailList);
+
         }
-
-
     }
 
     @Override
@@ -317,5 +327,4 @@ public class AddBillFragment extends Fragment implements View.OnClickListener, I
             txtTotal.setText(totalMoney + "");
         }
     }
-
 }

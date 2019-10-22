@@ -55,7 +55,7 @@
             android:id="@+id/edtPlaceCustomer"
             android:layout_marginTop="10dp"
             android:padding="10dp"
-            android:hint="Name"
+            android:hint="Place"
             android:background="@drawable/custom_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

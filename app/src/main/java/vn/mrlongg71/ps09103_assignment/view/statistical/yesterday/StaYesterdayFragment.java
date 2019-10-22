@@ -1,5 +1,6 @@
  package vn.mrlongg71.ps09103_assignment.view.statistical.yesterday;
 
+import android.app.ProgressDialog;
 import android.icu.text.NumberFormat;
 import android.os.Build;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +35,7 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
     private TextView txtYesCurrent,txtYesThu,txtYesChi;
     private PieChart chartYes;
     private PresenterStatistical presenterStatistical;
+    private ProgressDialog progressDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,6 +43,8 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
         View view =
          inflater.inflate(R.layout.fragment_sta_yesterday, container, false);
         initView(view);
+        Dialog.DialogLoading(progressDialog,true);
+
         presenterStatistical.getListBill(0,0);
         callBack(view);
         return view;
@@ -51,6 +56,7 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
         txtYesChi = view.findViewById(R.id.txtChiYes);
         chartYes = view.findViewById(R.id.chartYes);
         presenterStatistical = new PresenterStatistical(this);
+        progressDialog = new ProgressDialog(getActivity());
     }
 
      private void callBack(View view){
@@ -78,7 +84,7 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
      @RequiresApi(api = Build.VERSION_CODES.N)
      @Override
      public void onStatisticalYesterday(List<Bill> billListDay, List<BillDetail> billDetailList, List<Book> bookList) {
-         int totalThu = 0;
+        int totalThu = 0;
          int totalChi = 0;
          for (Bill bill : billListDay) {
              totalThu += bill.getTotalPrice();
@@ -92,6 +98,7 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
          txtYesThu.setText(numberFormat.format(totalThu) +"");
          txtYesChi.setText(numberFormat.format(totalChi) + "");
          Chart.addDataSet(chartYes,totalThu,totalChi,0);
+         Dialog.DialogLoading(progressDialog,false);
      }
 
      @Override
@@ -102,6 +109,8 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
      @Override
      public void onStatisticalFailed() {
          Chart.addDataSet(chartYes,0,0,00);
+         Dialog.DialogLoading(progressDialog,false);
+
      }
 
      private Date yesterday() {

@@ -1,5 +1,6 @@
 package vn.mrlongg71.ps09103_assignment.view.bill;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +19,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+
+import java.util.Arrays;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -30,6 +41,8 @@ public class ChooseCustomerActivity extends AppCompatActivity implements IViewCh
     private Toolbar toolbar_ChooseCustomer;
     private PresenterChooseCustomer presenterChooseCustomer;
     private RecyclerView recyclerCustomer;
+    private AutocompleteSupportFragment autocompleteFragment;
+    private Place place;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +71,9 @@ public class ChooseCustomerActivity extends AppCompatActivity implements IViewCh
         toolbar_ChooseCustomer.setTitle("dffdf");
         presenterChooseCustomer = new PresenterChooseCustomer(this);
         recyclerCustomer = findViewById(R.id.recyclerCustomer);
+        autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteFragment.getView().setVisibility(View.GONE);
     }
 
     @Override
@@ -83,7 +99,19 @@ public class ChooseCustomerActivity extends AppCompatActivity implements IViewCh
         edtPhoneCustomer = dialog.findViewById(R.id.edtPhoneCustomer);
         edtNameCustomer = dialog.findViewById(R.id.edtNameCustomer);
         edtPlaceCustomer = dialog.findViewById(R.id.edtPlaceCustomer);
+
         btnAddCustomerNewDialog = dialog.findViewById(R.id.btnAddCustomerNewDialog);
+
+        edtPlaceCustomer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initChooosePlacesGooogeMap();
+            }
+        });
+        if(place != null){
+            edtPlaceCustomer.setText(place.getName());
+        }
+
         btnAddCustomerNewDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +131,46 @@ public class ChooseCustomerActivity extends AppCompatActivity implements IViewCh
 
         dialog.show();
     }
+    private void initChooosePlacesGooogeMap() {
+
+        Places.initialize(getApplicationContext(), getString(R.string.apikey_google));
+
+        autocompleteFragment.getView().setVisibility(View.VISIBLE);
+
+        List<Place.Field> fields = Arrays.asList(Place.Field.LAT_LNG, Place.Field.NAME);
+        autocompleteFragment.setPlaceFields(fields);
+
+
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+
+            }
+
+
+            @Override
+            public void onError(Status status) {
+
+            }
+        });
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.OVERLAY, fields)
+                .build(this);
+        startActivityForResult(intent, 111);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 111) {
+            if (resultCode == RESULT_OK) {
+                place = Autocomplete.getPlaceFromIntent(data);
+
+            }
+        }
+    }
 
     @Override
     public void displayListCustomer(List<Customer> customerList) {
@@ -110,6 +178,8 @@ public class ChooseCustomerActivity extends AppCompatActivity implements IViewCh
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
         recyclerCustomer.setLayoutManager(layoutManager);
         recyclerCustomer.setAdapter(recyclerCustomerAdapter);
+        autocompleteFragment.getView().setVisibility(View.GONE);
+
         recyclerCustomerAdapter.notifyDataSetChanged();
     }
 

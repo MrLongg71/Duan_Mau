@@ -67,7 +67,7 @@ public class SearchBookActivity extends AppCompatActivity implements IViewBillSe
         setContentView(R.layout.activity_search_book);
         initView();
         setActionToolbar();
-
+        presenterBillSearch.getBook();
     }
 
 
@@ -113,7 +113,7 @@ public class SearchBookActivity extends AppCompatActivity implements IViewBillSe
 
     private void initView() {
         presenterBillSearch = new PresenterBillSearch(this);
-        broadcastReceiver = new NetworkReceiver();
+//        broadcastReceiver = new NetworkReceiver();
         progressDialog = new ProgressDialog(this);
         toolbar = findViewById(R.id.toolbar_Search);
         recyclerSearchBook = findViewById(R.id.recyclerBookSearch);
@@ -129,37 +129,37 @@ public class SearchBookActivity extends AppCompatActivity implements IViewBillSe
     btnChooseDoneBookBillSearch.setOnClickListener(this);
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(NetworkReceiver.EventConnect event) {
-
-        if (event.isConnect() == true) {
-            Dialog.DialogLoading(progressDialog, true);
-            presenterBillSearch.getBook();
-        } else {
-            Dialog.DialogLoading(progressDialog, false);
-
-        }
-    };
+//
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        EventBus.getDefault().register(this);
+//    }
+//
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        EventBus.getDefault().unregister(this);
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+//    }
+//
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onMessageEvent(NetworkReceiver.EventConnect event) {
+//
+//        if (event.isConnect() == true) {
+//            Dialog.DialogLoading(progressDialog, true);
+//            presenterBillSearch.getBook();
+//        } else {
+//            Dialog.DialogLoading(progressDialog, false);
+//
+//        }
+//    };
 
     @Override
     public void displayListBook(ArrayList<Book> bookList, ArrayList<TypeBook> typeBookList) {

@@ -22,31 +22,30 @@ import vn.mrlongg71.ps09103_assignment.presenter.statistical.PresenterStatistica
 public class ModelStatistical {
     public  void initGetListBill(final PresenterStatistical presenterStatistical){
         DatabaseReference noteRoot = FirebaseDatabase.getInstance().getReference();
+        final List<Bill> billList = new ArrayList<>();
+        final List<Book> bookList = new ArrayList<>();
+
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 DataSnapshot dataBill = dataSnapshot.child("Bill");
-                if(!dataBill.exists()){
+                DataSnapshot dataBook = dataSnapshot.child("Book");
+                if(!dataBill.exists() || !dataBook.exists()){
                     presenterStatistical.resultBillFailed();
                 }
 
                 for(DataSnapshot valueListBill : dataBill.getChildren()){
                     Bill bill = valueListBill.getValue(Bill.class);
-                    DataSnapshot dataDetailsBill = dataSnapshot.child("BillDetails");
-                    List<String> keyBillDetailsList = new ArrayList<>();
-                    for(DataSnapshot valueDetailsBill : dataDetailsBill.getChildren()){
-                        String key = valueDetailsBill.getKey();
-                        keyBillDetailsList.add(key);
-                    }
-                    DataSnapshot dataBook = dataSnapshot.child("Book");
-                    for(DataSnapshot valueBook : dataBook.getChildren()){
-                        Book book = valueBook.getValue(Book.class);
-                        presenterStatistical.resultBillSuccess(bill,keyBillDetailsList,book);
+                    billList.add(bill);
+                }
 
-                    }
-
+                for(DataSnapshot valueBook : dataBook.getChildren()){
+                    Book book = valueBook.getValue(Book.class);
+                    bookList.add(book);
 
                 }
+                presenterStatistical.resultBillSuccess(billList,bookList);
+
 
             }
 
@@ -55,7 +54,7 @@ public class ModelStatistical {
 
             }
         };
-        noteRoot.addValueEventListener(valueEventListener);
+        noteRoot.addListenerForSingleValueEvent(valueEventListener);
     }
 
 

@@ -61,5 +61,9 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     //chart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    //google map
+
+    implementation 'com.google.android.libraries.places:places:2.0.0'
+
 }
 apply plugin: 'com.google.gms.google-services'

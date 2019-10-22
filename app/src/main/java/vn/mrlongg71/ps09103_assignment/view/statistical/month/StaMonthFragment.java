@@ -1,5 +1,6 @@
 package vn.mrlongg71.ps09103_assignment.view.statistical.month;
 
+import android.app.ProgressDialog;
 import android.icu.text.NumberFormat;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import vn.mrlongg71.ps09103_assignment.R;
 import vn.mrlongg71.ps09103_assignment.library.Chart;
+import vn.mrlongg71.ps09103_assignment.library.Dialog;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Bill;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.BillDetail;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Book;
@@ -39,6 +41,7 @@ public class StaMonthFragment extends Fragment implements IViewStatistical {
     private Spinner spMonth;
     private List<String> arrMonth;
     private ArrayAdapter<String> arrayAdapter;
+    private ProgressDialog progressDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class StaMonthFragment extends Fragment implements IViewStatistical {
          inflater.inflate(R.layout.fragment_sta_month, container, false);
         initView(view);
         presenterStatistical.getListBill(2,0);
+//        presenterStatistical.initStatisticalMonth(0);
         return view;
     }
 
@@ -55,6 +59,7 @@ public class StaMonthFragment extends Fragment implements IViewStatistical {
         txtMonthChi = view.findViewById(R.id.txtChiMonth);
         txtMonthThu = view.findViewById(R.id.txtThuMonth);
         chartMonth = view.findViewById(R.id.chartMonth);
+        progressDialog = new ProgressDialog(getActivity());
         presenterStatistical = new PresenterStatistical(this);
         spMonth = view.findViewById(R.id.spMonth);
         arrMonth = new ArrayList<>();
@@ -69,8 +74,7 @@ public class StaMonthFragment extends Fragment implements IViewStatistical {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String[] monthStr = arrMonth.get(position).split("-");
                 int month = Integer.parseInt(monthStr[1]);
-                    presenterStatistical.getListBill(2,month);
-
+                   presenterStatistical.initStatisticalMonth(month);
 
 
             }
@@ -111,11 +115,14 @@ public class StaMonthFragment extends Fragment implements IViewStatistical {
         txtMonthThu.setText(numberFormat.format(totalThu) +"");
         txtMonthChi.setText(numberFormat.format(totalChi) + "");
         Chart.addDataSet(chartMonth,totalThu,totalChi,2);
+        Dialog.DialogLoading(progressDialog,false);
+
     }
 
     @Override
     public void onStatisticalFailed() {
         Chart.addDataSet(chartMonth,0,0,00);
+        Dialog.DialogLoading(progressDialog,false);
 
     }
 

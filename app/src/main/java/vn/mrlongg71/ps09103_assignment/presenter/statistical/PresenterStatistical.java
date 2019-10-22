@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.security.KeyException;
@@ -16,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Handler;
 
 import vn.mrlongg71.ps09103_assignment.model.objectclass.Bill;
 import vn.mrlongg71.ps09103_assignment.model.objectclass.BillDetail;
@@ -25,49 +27,60 @@ import vn.mrlongg71.ps09103_assignment.view.statistical.IViewStatistical;
 
 public class PresenterStatistical implements IPresenterStatistical {
     IViewStatistical iViewStatistical;
-    List<Bill> billList = new ArrayList<>();
     List<BillDetail> billDetailListItem = new ArrayList<>();
-    List<Book> bookList = new ArrayList<>();
     ModelStatistical modelStatistical;
+    List<Bill> billList;
+    List<Book> bookList;
 
     public PresenterStatistical(IViewStatistical iViewStatistical) {
         this.iViewStatistical = iViewStatistical;
         modelStatistical = new ModelStatistical();
+        billList = new ArrayList<>();
+        bookList = new ArrayList<>();
     }
 
     @Override
     public void getListBill(int i, int month) {
-        if (billList.size() == 0) {
-            modelStatistical.initGetListBill(this);
-        } else {
-            statistical(i, month);
-        }
-
+        modelStatistical.initGetListBill(this);
     }
 
     private void statistical(int i, int month) {
-        switch (i) {
-            case 0:
-                initStatisticalYesterDay();
-                break;
-            case 1:
+        if (bookList != null && billList != null) {
+            Log.d("kiemtra123", "result " + billList.size() + "  " + bookList.size());
 
-                initStatisticalDay();
-                break;
-            case 2:
-                initStatisticalMonth(month);
-                break;
+            switch (i) {
+                case 0:
+                    initStatisticalYesterDay();
+                    Log.d("kiemtra123", "yes");
+
+                    break;
+                case 1:
+
+                    initStatisticalDay();
+                    Log.d("kiemtra123", "day");
+
+                    break;
+                case 2:
+                    initStatisticalMonth(month);
+                    Log.d("kiemtra123", "month");
+
+                    break;
+            }
         }
     }
 
     @Override
-    public void resultBillSuccess(Bill bill, List<String> keyBillDetails, Book book) {
-        if (bill != null) {
-            billList.add(bill);
-            bookList.add(book);
-            initStatisticalDay();
-            initStatisticalYesterDay();
-            initStatisticalMonth(0);
+    public void resultBillSuccess(List<Bill> billListDow, List<Book> bookListDow) {
+        if (billListDow != null && bookListDow != null) {
+            billList.addAll(billListDow);
+            bookList.addAll(bookListDow);
+            if(billList != null && bookList != null){
+                initStatisticalYesterDay();
+                initStatisticalDay();
+                initStatisticalMonth(0);
+            }
+
+
         }
     }
 
@@ -77,7 +90,6 @@ public class PresenterStatistical implements IPresenterStatistical {
     }
 
     public void initStatisticalDay() {
-
 
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -89,22 +101,7 @@ public class PresenterStatistical implements IPresenterStatistical {
             String[] dateBill = bill.getDateCreate().split("-");
             if (dateBill[0].equals(dateCal[0])) {
                 billListDay.add(bill);
-//                    for(int i = 0; i < keyBillDetails.size() ;i++){
-//                        if(bill.getCodeBillDetail().equals(keyBillDetails.get(i))){
-//                            initGetDetailsListBill(keyBillDetails.get(i));
-//                        }
 //
-//                    }
-//                    if(billDetailListItem.size() >0){
-
-//                    }
-
-//                    for (int i = 0; i < billListDay.size(); i++) {
-//                        if (billListDay.get(i).getCodeBillDetail().equals(billDetailList.get(i).getCode())) {
-//                            billDetailList.add(billDetailList.get(i));
-//                        }
-//
-//                    }
             }
             bookListDay.clear();
             for (Book book : bookList) {
@@ -117,12 +114,7 @@ public class PresenterStatistical implements IPresenterStatistical {
 
         }
 
-//            for(int i  = 0; i < billListDay.size() ;i++){
-//                if(billListDay.get(i).getCodeBillDetail().equals(billDetailList.get(i).getCode())){
-//                    billDetailList.add(billDetailList.get(i));
-//                }
 //
-//            }
 
 
     }
@@ -139,22 +131,6 @@ public class PresenterStatistical implements IPresenterStatistical {
             String[] dateBill = bill.getDateCreate().split("-");
             if (dateBill[0].equals(yesterday)) {
                 billListDay.add(bill);
-//                    for(int i = 0; i < keyBillDetails.size() ;i++){
-//                        if(bill.getCodeBillDetail().equals(keyBillDetails.get(i))){
-//                            initGetDetailsListBill(keyBillDetails.get(i));
-//                        }
-//
-//                    }
-//                    if(billDetailListItem.size() >0){
-
-//                    }
-
-//                    for (int i = 0; i < billListDay.size(); i++) {
-//                        if (billListDay.get(i).getCodeBillDetail().equals(billDetailList.get(i).getCode())) {
-//                            billDetailList.add(billDetailList.get(i));
-//                        }
-//
-//                    }
             }
             bookListDay.clear();
             for (Book book : bookList) {
@@ -167,23 +143,19 @@ public class PresenterStatistical implements IPresenterStatistical {
 
         }
 
-//            for(int i  = 0; i < billListDay.size() ;i++){
-//                if(billListDay.get(i).getCodeBillDetail().equals(billDetailList.get(i).getCode())){
-//                    billDetailList.add(billDetailList.get(i));
-//                }
 //
-//            }
 
 
     }
 
     public void initStatisticalMonth(final int month) {
+
         String[] dateCal;
         if (month != 0) {
             dateCal = new String[2];
             if (month < 10) {
                 dateCal[1] = "0" + month;
-            }  else {
+            } else {
                 dateCal[1] = String.valueOf(month);
 
             }
@@ -201,22 +173,7 @@ public class PresenterStatistical implements IPresenterStatistical {
             String[] dateBill = bill.getDateCreate().split("-");
             if (dateBill[1].equals(dateCal[1])) {
                 billListDay.add(bill);
-//                    for(int i = 0; i < keyBillDetails.size() ;i++){
-//                        if(bill.getCodeBillDetail().equals(keyBillDetails.get(i))){
-//                            initGetDetailsListBill(keyBillDetails.get(i));
-//                        }
 //
-//                    }
-//                    if(billDetailListItem.size() >0){
-
-//                    }
-
-//                    for (int i = 0; i < billListDay.size(); i++) {
-//                        if (billListDay.get(i).getCodeBillDetail().equals(billDetailList.get(i).getCode())) {
-//                            billDetailList.add(billDetailList.get(i));
-//                        }
-//
-//                    }
             }
             bookListDay.clear();
             for (Book book : bookList) {
@@ -229,36 +186,9 @@ public class PresenterStatistical implements IPresenterStatistical {
 
         }
 
-//            for(int i  = 0; i < billListDay.size() ;i++){
-//                if(billListDay.get(i).getCodeBillDetail().equals(billDetailList.get(i).getCode())){
-//                    billDetailList.add(billDetailList.get(i));
-//                }
 //
-//            }
 
 
-    }
-
-    private void initGetDetailsListBill(String key) {
-        Log.d("ggg", key);
-        DatabaseReference dataDetailsBill = FirebaseDatabase.getInstance().getReference().child("BillDetails").child(key);
-        ValueEventListener valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot valueDetails : dataSnapshot.getChildren()) {
-                    BillDetail billDetail = valueDetails.getValue(BillDetail.class);
-                    billDetailListItem.add(billDetail);
-                    Log.d("ggg", "------");
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-        dataDetailsBill.addValueEventListener(valueEventListener);
     }
 
 

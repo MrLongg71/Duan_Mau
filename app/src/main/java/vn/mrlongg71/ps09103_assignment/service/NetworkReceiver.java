@@ -19,7 +19,7 @@ import org.greenrobot.eventbus.EventBus;
 import es.dmoral.toasty.Toasty;
 import vn.mrlongg71.ps09103_assignment.R;
 
-public class NetworkReceiver extends BroadcastReceiver {
+public class NetworkReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,7 +27,6 @@ public class NetworkReceiver extends BroadcastReceiver {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
 
         if (netInfo != null && netInfo.isConnected()) {
-            Log.d("kiemtra" , "connect");
             EventBus.getDefault().post(new EventConnect(true));
             Toasty.success(context,"Connected", Toasty.LENGTH_LONG).show();
 

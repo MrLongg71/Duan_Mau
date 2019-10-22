@@ -76,7 +76,7 @@ public class AddBookFragment extends Fragment implements IViewBook {
         initEventAdd();
         initEventEdit();
         fragmentManager = getActivity().getSupportFragmentManager();
-        PopBack.callBack(view,fragmentManager);
+        PopBack.callBack(view, fragmentManager);
         return view;
     }
 
@@ -141,19 +141,23 @@ public class AddBookFragment extends Fragment implements IViewBook {
                 String amount = edtAmount.getText().toString().trim();
                 String pricestr = edtPrice.getText().toString().trim();
                 if (checkValid(bookname, author, amount, pricestr, positionSpiner, listPathImages)) {
-                    book.setBookname(edtBookName.getText().toString().trim());
-                    book.setAmount(edtAmount.getText().toString().trim());
-                    book.setAuthor(edtAuthor.getText().toString().trim());
+                    if (checkValidAmount(amount, edtAmount)) {
+                        if (checkValidAmount(pricestr, edtPrice)) {
+                            book.setBookname(edtBookName.getText().toString().trim());
+                            book.setAmount(edtAmount.getText().toString().trim());
+                            book.setAuthor(edtAuthor.getText().toString().trim());
 
-                    double price = Double.parseDouble(pricestr);
-                    book.setPrice(price);
-                    book.setTypecode(typeBookLists.get(positionSpiner).getKey());
-                    if(click){
-                        presenterBook.getItemEditBook(book.getBookcode(), book,listPathImages);
+                            double price = Double.parseDouble(pricestr);
+                            book.setPrice(price);
+                            book.setTypecode(typeBookLists.get(positionSpiner).getKey());
+                            if (click) {
+                                presenterBook.getItemEditBook(book.getBookcode(), book, listPathImages);
+                            }
+                            presenterBook.getItemEditBook(book.getBookcode(), book, null);
+
+                        }
                     }
-                    presenterBook.getItemEditBook(book.getBookcode(), book,null);
-
-                } else {
+                }else {
                     Toasty.error(getActivity(), getString(R.string.error), Toasty.LENGTH_LONG).show();
                 }
             }
@@ -166,7 +170,7 @@ public class AddBookFragment extends Fragment implements IViewBook {
             btnAddBook.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Dialog.DialogLoading(progressDialog,true);
+
 
                     positionSpiner = spinnerTypeBook.getSelectedItemPosition();
                     String bookname = edtBookName.getText().toString().trim();
@@ -174,26 +178,29 @@ public class AddBookFragment extends Fragment implements IViewBook {
                     String amount = edtAmount.getText().toString().trim();
                     String pricestr = edtPrice.getText().toString().trim();
 
-
                     if (checkValid(bookname, author, amount, pricestr, positionSpiner, listPathImages)) {
-                        Dialog.DialogLoading(progressDialog, true);
-                        Book book = new Book();
-                        book.setBookname(edtBookName.getText().toString().trim());
-                        book.setAmount(edtAmount.getText().toString().trim());
-                        book.setAuthor(edtAuthor.getText().toString().trim());
+                        if (checkValidAmount(amount, edtAmount)) {
+                            if (checkValidAmount(pricestr, edtPrice)) {
 
-                        calendar = calendar.getInstance();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                        book.setDate(simpleDateFormat.format(calendar.getTime()));
-                        double price = Double.parseDouble(pricestr);
-                        book.setPrice(price);
-                        book.setTypecode(typeBookLists.get(positionSpiner).getKey());
+                                Dialog.DialogLoading(progressDialog, true);
+                                Book book = new Book();
+                                book.setBookname(edtBookName.getText().toString().trim());
+                                book.setAmount(edtAmount.getText().toString().trim());
+                                book.setAuthor(edtAuthor.getText().toString().trim());
 
-                        presenterBook.getAddBook(book, listPathImages);
+                                calendar = calendar.getInstance();
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                                book.setDate(simpleDateFormat.format(calendar.getTime()));
+                                double price = Double.parseDouble(pricestr);
+                                book.setPrice(price);
+                                book.setTypecode(typeBookLists.get(positionSpiner).getKey());
+
+                                presenterBook.getAddBook(book, listPathImages);
+                            }
+                        }
                     } else {
                         Toasty.error(getActivity(), getString(R.string.error), Toasty.LENGTH_LONG).show();
                     }
-
                 }
             });
         }
@@ -242,7 +249,7 @@ public class AddBookFragment extends Fragment implements IViewBook {
 
     @Override
     public void displayEditItemBookSuccess() {
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,new BookFragment()).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram, new BookFragment()).commit();
         Toasty.success(getActivity(), getString(R.string.success), Toasty.LENGTH_LONG).show();
     }
 
@@ -260,12 +267,23 @@ public class AddBookFragment extends Fragment implements IViewBook {
         }
     }
 
+    public boolean checkValidAmount(String amount,TextInputEditText edt) {
+        if (amount.equals("0") || Integer.parseInt(amount) <= 0) {
+            edt.setError("0?");
+            return false;
+        } else {
+            return true;
+        }
+
+
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUESTCODE) {
             if (resultCode == getActivity().RESULT_OK && data != null) {
-                listPathImages.clear();
                 listPathImages = data.getStringArrayListExtra("listpath");
             }
             if (listPathImages.size() > 0) {
@@ -361,7 +379,6 @@ public class AddBookFragment extends Fragment implements IViewBook {
 
             imgChooseImagesBook3.setMaxWidth(with);
             imgChooseImagesBook3.setMaxHeight(with);
-
 
 
             cardCamera2.setVisibility(View.VISIBLE);

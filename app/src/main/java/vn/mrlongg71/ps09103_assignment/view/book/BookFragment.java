@@ -76,7 +76,7 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
 
         presenterBook = new PresenterBook(this);
 
-
+        presenterBook.getBook();
 
         return view;
     }
@@ -84,8 +84,8 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
     private void initView(View view) {
         recyclerViewBook = view.findViewById(R.id.recyclerBook);
         progressDialog = new ProgressDialog(getActivity());
-        broadcastReceiver = new NetworkReceiver();
-        broadcastReceiver = new NetworkReceiver();
+
+//        broadcastReceiver = new NetworkReceiver();
         txtNoData = view.findViewById(R.id.txtNoData);
         fragmentManager = getActivity().getSupportFragmentManager();
         Dialog.DialogLoading(progressDialog,true);
@@ -224,34 +224,34 @@ public class BookFragment extends Fragment implements IViewBook, IPresenterBookA
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fram,addBookFragment).addToBackStack(null).commit();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().registerReceiver(broadcastReceiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(NetworkReceiver.EventConnect event) {
-
-        if(event.isConnect() == true){
-            Dialog.DialogLoading(progressDialog,true);
-            presenterBook.getBook();
-        }else {
-            Dialog.DialogLoading(progressDialog,false);
-
-        }
-    };
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        EventBus.getDefault().register(this);
+//    }
+//
+//
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        EventBus.getDefault().unregister(this);
+//    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        getActivity().registerReceiver(broadcastReceiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+//    }
+//
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onMessageEvent(NetworkReceiver.EventConnect event) {
+//
+//        if(event.isConnect() == true){
+//            Dialog.DialogLoading(progressDialog,true);
+//            presenterBook.getBook();
+//        }else {
+//            Dialog.DialogLoading(progressDialog,false);
+//
+//        }
+//    };
 }

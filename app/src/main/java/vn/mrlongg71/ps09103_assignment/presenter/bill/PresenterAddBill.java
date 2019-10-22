@@ -26,6 +26,7 @@ public class PresenterAddBill implements IPresenterAddBill {
     @Override
     public void resultAddbill(boolean success) {
         if(success){
+
             iViewBillAdd.onAddSucces();
         }else {
             iViewBillAdd.onAddFailed();

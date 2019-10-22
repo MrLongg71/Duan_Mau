@@ -6,6 +6,7 @@
     <!--facebook key-->
     <string name="facebook_app_id">703082543437524</string>
     <string name="fb_login_protocol_scheme">fb703082543437524</string>
+    <string name="apikey_google">AIzaSyBrZT5acqaqK--bMwnGBBZoW2W3LSOspIs</string>
 
 
     <!--Google key-->
